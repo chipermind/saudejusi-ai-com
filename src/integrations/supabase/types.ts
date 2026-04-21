@@ -246,6 +246,15 @@ export type Database = {
     }
     Functions: {
       current_law_firm_id: { Args: never; Returns: string }
+      signup_create_firm: {
+        Args: {
+          _firm_name: string
+          _full_name: string
+          _oab_number: string
+          _oab_state: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
