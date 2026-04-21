@@ -14,6 +14,9 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppCasosIndexRouteImport } from './routes/app.casos.index'
+import { Route as AppCasosNovoRouteImport } from './routes/app.casos.novo'
+import { Route as AppCasosIdRouteImport } from './routes/app.casos.$id'
 import { Route as ApiIaGenerateDeliverableRouteImport } from './routes/api.ia.generate-deliverable'
 import { Route as ApiIaExtractDocumentRouteImport } from './routes/api.ia.extract-document'
 import { Route as ApiIaEstimateJurimetricsRouteImport } from './routes/api.ia.estimate-jurimetrics'
@@ -42,6 +45,21 @@ const IndexRoute = IndexRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCasosIndexRoute = AppCasosIndexRouteImport.update({
+  id: '/casos/',
+  path: '/casos/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCasosNovoRoute = AppCasosNovoRouteImport.update({
+  id: '/casos/novo',
+  path: '/casos/novo',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCasosIdRoute = AppCasosIdRouteImport.update({
+  id: '/casos/$id',
+  path: '/casos/$id',
   getParentRoute: () => AppRoute,
 } as any)
 const ApiIaGenerateDeliverableRoute =
@@ -77,6 +95,9 @@ export interface FileRoutesByFullPath {
   '/api/ia/estimate-jurimetrics': typeof ApiIaEstimateJurimetricsRoute
   '/api/ia/extract-document': typeof ApiIaExtractDocumentRoute
   '/api/ia/generate-deliverable': typeof ApiIaGenerateDeliverableRoute
+  '/app/casos/$id': typeof AppCasosIdRoute
+  '/app/casos/novo': typeof AppCasosNovoRoute
+  '/app/casos/': typeof AppCasosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -87,6 +108,9 @@ export interface FileRoutesByTo {
   '/api/ia/estimate-jurimetrics': typeof ApiIaEstimateJurimetricsRoute
   '/api/ia/extract-document': typeof ApiIaExtractDocumentRoute
   '/api/ia/generate-deliverable': typeof ApiIaGenerateDeliverableRoute
+  '/app/casos/$id': typeof AppCasosIdRoute
+  '/app/casos/novo': typeof AppCasosNovoRoute
+  '/app/casos': typeof AppCasosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -99,6 +123,9 @@ export interface FileRoutesById {
   '/api/ia/estimate-jurimetrics': typeof ApiIaEstimateJurimetricsRoute
   '/api/ia/extract-document': typeof ApiIaExtractDocumentRoute
   '/api/ia/generate-deliverable': typeof ApiIaGenerateDeliverableRoute
+  '/app/casos/$id': typeof AppCasosIdRoute
+  '/app/casos/novo': typeof AppCasosNovoRoute
+  '/app/casos/': typeof AppCasosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -112,6 +139,9 @@ export interface FileRouteTypes {
     | '/api/ia/estimate-jurimetrics'
     | '/api/ia/extract-document'
     | '/api/ia/generate-deliverable'
+    | '/app/casos/$id'
+    | '/app/casos/novo'
+    | '/app/casos/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +152,9 @@ export interface FileRouteTypes {
     | '/api/ia/estimate-jurimetrics'
     | '/api/ia/extract-document'
     | '/api/ia/generate-deliverable'
+    | '/app/casos/$id'
+    | '/app/casos/novo'
+    | '/app/casos'
   id:
     | '__root__'
     | '/'
@@ -133,6 +166,9 @@ export interface FileRouteTypes {
     | '/api/ia/estimate-jurimetrics'
     | '/api/ia/extract-document'
     | '/api/ia/generate-deliverable'
+    | '/app/casos/$id'
+    | '/app/casos/novo'
+    | '/app/casos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -183,6 +219,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/casos/': {
+      id: '/app/casos/'
+      path: '/casos'
+      fullPath: '/app/casos/'
+      preLoaderRoute: typeof AppCasosIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/casos/novo': {
+      id: '/app/casos/novo'
+      path: '/casos/novo'
+      fullPath: '/app/casos/novo'
+      preLoaderRoute: typeof AppCasosNovoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/casos/$id': {
+      id: '/app/casos/$id'
+      path: '/casos/$id'
+      fullPath: '/app/casos/$id'
+      preLoaderRoute: typeof AppCasosIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/api/ia/generate-deliverable': {
       id: '/api/ia/generate-deliverable'
       path: '/api/ia/generate-deliverable'
@@ -216,10 +273,16 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
+  AppCasosIdRoute: typeof AppCasosIdRoute
+  AppCasosNovoRoute: typeof AppCasosNovoRoute
+  AppCasosIndexRoute: typeof AppCasosIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
+  AppCasosIdRoute: AppCasosIdRoute,
+  AppCasosNovoRoute: AppCasosNovoRoute,
+  AppCasosIndexRoute: AppCasosIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -237,3 +300,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
