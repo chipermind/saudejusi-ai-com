@@ -67,8 +67,8 @@ function AppLayout() {
         .maybeSingle();
 
       const fullName = lawyer?.full_name ?? u.user.email ?? "Usuário";
-      // @ts-expect-error nested join
-      const firmName: string = lawyer?.law_firms?.name ?? "";
+      const firmRel = (lawyer as { law_firms?: { name?: string } | null } | null)?.law_firms;
+      const firmName: string = firmRel?.name ?? "";
       const initials = fullName
         .split(" ")
         .filter(Boolean)
