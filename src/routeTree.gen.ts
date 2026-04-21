@@ -14,6 +14,13 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppCasosIndexRouteImport } from './routes/app.casos.index'
+import { Route as AppCasosNovoRouteImport } from './routes/app.casos.novo'
+import { Route as AppCasosIdRouteImport } from './routes/app.casos.$id'
+import { Route as ApiIaGenerateDeliverableRouteImport } from './routes/api.ia.generate-deliverable'
+import { Route as ApiIaExtractDocumentRouteImport } from './routes/api.ia.extract-document'
+import { Route as ApiIaEstimateJurimetricsRouteImport } from './routes/api.ia.estimate-jurimetrics'
+import { Route as ApiIaClassifyDenialRouteImport } from './routes/api.ia.classify-denial'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -40,6 +47,43 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCasosIndexRoute = AppCasosIndexRouteImport.update({
+  id: '/casos/',
+  path: '/casos/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCasosNovoRoute = AppCasosNovoRouteImport.update({
+  id: '/casos/novo',
+  path: '/casos/novo',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCasosIdRoute = AppCasosIdRouteImport.update({
+  id: '/casos/$id',
+  path: '/casos/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const ApiIaGenerateDeliverableRoute =
+  ApiIaGenerateDeliverableRouteImport.update({
+    id: '/api/ia/generate-deliverable',
+    path: '/api/ia/generate-deliverable',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiIaExtractDocumentRoute = ApiIaExtractDocumentRouteImport.update({
+  id: '/api/ia/extract-document',
+  path: '/api/ia/extract-document',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiIaEstimateJurimetricsRoute =
+  ApiIaEstimateJurimetricsRouteImport.update({
+    id: '/api/ia/estimate-jurimetrics',
+    path: '/api/ia/estimate-jurimetrics',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiIaClassifyDenialRoute = ApiIaClassifyDenialRouteImport.update({
+  id: '/api/ia/classify-denial',
+  path: '/api/ia/classify-denial',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,12 +91,26 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/app/': typeof AppIndexRoute
+  '/api/ia/classify-denial': typeof ApiIaClassifyDenialRoute
+  '/api/ia/estimate-jurimetrics': typeof ApiIaEstimateJurimetricsRoute
+  '/api/ia/extract-document': typeof ApiIaExtractDocumentRoute
+  '/api/ia/generate-deliverable': typeof ApiIaGenerateDeliverableRoute
+  '/app/casos/$id': typeof AppCasosIdRoute
+  '/app/casos/novo': typeof AppCasosNovoRoute
+  '/app/casos/': typeof AppCasosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/app': typeof AppIndexRoute
+  '/api/ia/classify-denial': typeof ApiIaClassifyDenialRoute
+  '/api/ia/estimate-jurimetrics': typeof ApiIaEstimateJurimetricsRoute
+  '/api/ia/extract-document': typeof ApiIaExtractDocumentRoute
+  '/api/ia/generate-deliverable': typeof ApiIaGenerateDeliverableRoute
+  '/app/casos/$id': typeof AppCasosIdRoute
+  '/app/casos/novo': typeof AppCasosNovoRoute
+  '/app/casos': typeof AppCasosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,13 +119,56 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/app/': typeof AppIndexRoute
+  '/api/ia/classify-denial': typeof ApiIaClassifyDenialRoute
+  '/api/ia/estimate-jurimetrics': typeof ApiIaEstimateJurimetricsRoute
+  '/api/ia/extract-document': typeof ApiIaExtractDocumentRoute
+  '/api/ia/generate-deliverable': typeof ApiIaGenerateDeliverableRoute
+  '/app/casos/$id': typeof AppCasosIdRoute
+  '/app/casos/novo': typeof AppCasosNovoRoute
+  '/app/casos/': typeof AppCasosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/login' | '/signup' | '/app/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/login'
+    | '/signup'
+    | '/app/'
+    | '/api/ia/classify-denial'
+    | '/api/ia/estimate-jurimetrics'
+    | '/api/ia/extract-document'
+    | '/api/ia/generate-deliverable'
+    | '/app/casos/$id'
+    | '/app/casos/novo'
+    | '/app/casos/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/app'
-  id: '__root__' | '/' | '/app' | '/login' | '/signup' | '/app/'
+  to:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/app'
+    | '/api/ia/classify-denial'
+    | '/api/ia/estimate-jurimetrics'
+    | '/api/ia/extract-document'
+    | '/api/ia/generate-deliverable'
+    | '/app/casos/$id'
+    | '/app/casos/novo'
+    | '/app/casos'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/login'
+    | '/signup'
+    | '/app/'
+    | '/api/ia/classify-denial'
+    | '/api/ia/estimate-jurimetrics'
+    | '/api/ia/extract-document'
+    | '/api/ia/generate-deliverable'
+    | '/app/casos/$id'
+    | '/app/casos/novo'
+    | '/app/casos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -75,6 +176,10 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  ApiIaClassifyDenialRoute: typeof ApiIaClassifyDenialRoute
+  ApiIaEstimateJurimetricsRoute: typeof ApiIaEstimateJurimetricsRoute
+  ApiIaExtractDocumentRoute: typeof ApiIaExtractDocumentRoute
+  ApiIaGenerateDeliverableRoute: typeof ApiIaGenerateDeliverableRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -114,15 +219,70 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/casos/': {
+      id: '/app/casos/'
+      path: '/casos'
+      fullPath: '/app/casos/'
+      preLoaderRoute: typeof AppCasosIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/casos/novo': {
+      id: '/app/casos/novo'
+      path: '/casos/novo'
+      fullPath: '/app/casos/novo'
+      preLoaderRoute: typeof AppCasosNovoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/casos/$id': {
+      id: '/app/casos/$id'
+      path: '/casos/$id'
+      fullPath: '/app/casos/$id'
+      preLoaderRoute: typeof AppCasosIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/api/ia/generate-deliverable': {
+      id: '/api/ia/generate-deliverable'
+      path: '/api/ia/generate-deliverable'
+      fullPath: '/api/ia/generate-deliverable'
+      preLoaderRoute: typeof ApiIaGenerateDeliverableRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ia/extract-document': {
+      id: '/api/ia/extract-document'
+      path: '/api/ia/extract-document'
+      fullPath: '/api/ia/extract-document'
+      preLoaderRoute: typeof ApiIaExtractDocumentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ia/estimate-jurimetrics': {
+      id: '/api/ia/estimate-jurimetrics'
+      path: '/api/ia/estimate-jurimetrics'
+      fullPath: '/api/ia/estimate-jurimetrics'
+      preLoaderRoute: typeof ApiIaEstimateJurimetricsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ia/classify-denial': {
+      id: '/api/ia/classify-denial'
+      path: '/api/ia/classify-denial'
+      fullPath: '/api/ia/classify-denial'
+      preLoaderRoute: typeof ApiIaClassifyDenialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
+  AppCasosIdRoute: typeof AppCasosIdRoute
+  AppCasosNovoRoute: typeof AppCasosNovoRoute
+  AppCasosIndexRoute: typeof AppCasosIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
+  AppCasosIdRoute: AppCasosIdRoute,
+  AppCasosNovoRoute: AppCasosNovoRoute,
+  AppCasosIndexRoute: AppCasosIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -132,6 +292,10 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  ApiIaClassifyDenialRoute: ApiIaClassifyDenialRoute,
+  ApiIaEstimateJurimetricsRoute: ApiIaEstimateJurimetricsRoute,
+  ApiIaExtractDocumentRoute: ApiIaExtractDocumentRoute,
+  ApiIaGenerateDeliverableRoute: ApiIaGenerateDeliverableRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

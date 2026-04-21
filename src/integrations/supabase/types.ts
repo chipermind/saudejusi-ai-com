@@ -14,36 +14,102 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_calls_log: {
+        Row: {
+          call_type: string
+          case_id: string | null
+          cost_usd: number | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          input_tokens: number | null
+          latency_ms: number | null
+          law_firm_id: string | null
+          model: string
+          output_tokens: number | null
+          success: boolean | null
+        }
+        Insert: {
+          call_type: string
+          case_id?: string | null
+          cost_usd?: number | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          input_tokens?: number | null
+          latency_ms?: number | null
+          law_firm_id?: string | null
+          model: string
+          output_tokens?: number | null
+          success?: boolean | null
+        }
+        Update: {
+          call_type?: string
+          case_id?: string | null
+          cost_usd?: number | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          input_tokens?: number | null
+          latency_ms?: number | null
+          law_firm_id?: string | null
+          model?: string
+          output_tokens?: number | null
+          success?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_calls_log_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_calls_log_law_firm_id_fkey"
+            columns: ["law_firm_id"]
+            isOneToOne: false
+            referencedRelation: "law_firms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       case_deliverables: {
         Row: {
           case_id: string | null
           content: string | null
           deliverable_type: string | null
+          error_message: string | null
           generated_at: string | null
           generated_by_model: string | null
           id: string
           reviewed_at: string | null
           reviewed_by: string | null
+          status: string | null
         }
         Insert: {
           case_id?: string | null
           content?: string | null
           deliverable_type?: string | null
+          error_message?: string | null
           generated_at?: string | null
           generated_by_model?: string | null
           id?: string
           reviewed_at?: string | null
           reviewed_by?: string | null
+          status?: string | null
         }
         Update: {
           case_id?: string | null
           content?: string | null
           deliverable_type?: string | null
+          error_message?: string | null
           generated_at?: string | null
           generated_by_model?: string | null
           id?: string
           reviewed_at?: string | null
           reviewed_by?: string | null
+          status?: string | null
         }
         Relationships: [
           {
@@ -108,55 +174,94 @@ export type Database = {
       }
       cases: {
         Row: {
+          ai_classification: Json | null
+          card_number: string | null
           cid: string | null
           client_cpf: string | null
           client_name: string
+          comarca: string | null
           created_at: string | null
           created_by: string | null
           denial_category: string | null
           denial_date: string | null
+          denial_reason: string | null
           estimated_damages: number | null
           id: string
+          is_draft: boolean | null
+          jurimetrics: Json | null
           law_firm_id: string | null
           operadora: string | null
+          plan_contracted_at: string | null
+          plan_modality: string | null
+          prescription_date: string | null
           procedure_requested: string | null
           status: string | null
           success_probability: number | null
+          tribunal: string | null
           updated_at: string | null
+          urgency: string | null
+          vara: string | null
+          wizard_step: number | null
         }
         Insert: {
+          ai_classification?: Json | null
+          card_number?: string | null
           cid?: string | null
           client_cpf?: string | null
           client_name: string
+          comarca?: string | null
           created_at?: string | null
           created_by?: string | null
           denial_category?: string | null
           denial_date?: string | null
+          denial_reason?: string | null
           estimated_damages?: number | null
           id?: string
+          is_draft?: boolean | null
+          jurimetrics?: Json | null
           law_firm_id?: string | null
           operadora?: string | null
+          plan_contracted_at?: string | null
+          plan_modality?: string | null
+          prescription_date?: string | null
           procedure_requested?: string | null
           status?: string | null
           success_probability?: number | null
+          tribunal?: string | null
           updated_at?: string | null
+          urgency?: string | null
+          vara?: string | null
+          wizard_step?: number | null
         }
         Update: {
+          ai_classification?: Json | null
+          card_number?: string | null
           cid?: string | null
           client_cpf?: string | null
           client_name?: string
+          comarca?: string | null
           created_at?: string | null
           created_by?: string | null
           denial_category?: string | null
           denial_date?: string | null
+          denial_reason?: string | null
           estimated_damages?: number | null
           id?: string
+          is_draft?: boolean | null
+          jurimetrics?: Json | null
           law_firm_id?: string | null
           operadora?: string | null
+          plan_contracted_at?: string | null
+          plan_modality?: string | null
+          prescription_date?: string | null
           procedure_requested?: string | null
           status?: string | null
           success_probability?: number | null
+          tribunal?: string | null
           updated_at?: string | null
+          urgency?: string | null
+          vara?: string | null
+          wizard_step?: number | null
         }
         Relationships: [
           {
