@@ -160,9 +160,53 @@ export async function callAiTask(params: AiTaskParams): Promise<AiResult> {
   return callAi({ ...rest, model: modelForTask(task) });
 }
 
+export type MediaMimeType =
+  | "image/png"
+  | "image/jpeg"
+  | "image/webp"
+  | "application/pdf";
+
+/**
+ * Multimodal helper: send a single media file (image OR PDF) plus a text prompt.
+ * Gemini (via Lovable AI Gateway) processes PDFs natively up to ~20MB and 1000 pages
+ * via the OpenAI-compatible `image_url` content type with a `data:<mime>;base64,...` URI.
+ * No external PDF→image conversion is required.
+ */
+export async function callAiWithMedia(params: {
+  task: LLMTask;
+  prompt: string;
+  mediaBase64: string;
+  mediaMimeType: MediaMimeType;
+  system?: string;
+  max_tokens?: number;
+  temperature?: number;
+  tools?: AiCallParams["tools"];
+  tool_choice?: AiCallParams["tool_choice"];
+}): Promise<AiResult> {
+  const dataUri = `data:${params.mediaMimeType};base64,${params.mediaBase64}`;
+  const messages: ChatContent[] = [];
+  if (params.system) messages.push({ role: "system", content: params.system });
+  messages.push({
+    role: "user",
+    content: [
+      { type: "text", text: params.prompt },
+      { type: "image_url", image_url: { url: dataUri } },
+    ],
+  });
+  return callAi({
+    model: modelForTask(params.task),
+    messages,
+    max_tokens: params.max_tokens,
+    temperature: params.temperature,
+    tools: params.tools,
+    tool_choice: params.tool_choice,
+  });
+}
+
 /**
  * Vision helper: send a single image (URL or data: URI) plus a text prompt.
- * Uses the OpenAI-compatible multimodal content array supported by the gateway.
+ * Kept for backwards compatibility — prefer `callAiWithMedia` for new code,
+ * which also accepts PDFs natively.
  */
 export async function callAiWithImage(params: {
   task: LLMTask;

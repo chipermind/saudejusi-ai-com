@@ -105,6 +105,7 @@ interface DocRow {
   file_name: string | null;
   ocr_extracted_at: string | null;
   extracted_data: Record<string, unknown> | null;
+  extraction_error: string | null;
 }
 
 function WizardPage() {
@@ -114,6 +115,7 @@ function WizardPage() {
   const [draft, setDraft] = useState<CaseDraft>({});
   const [docs, setDocs] = useState<DocRow[]>([]);
   const [extracting, setExtracting] = useState<Set<string>>(new Set());
+  const [manualSkip, setManualSkip] = useState<Set<string>>(new Set());
   const [classifying, setClassifying] = useState(false);
   const [jurimetricsLoading, setJurimetricsLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -131,7 +133,7 @@ function WizardPage() {
         setStep(Math.min(4, Math.max(1, (data as { wizard_step?: number }).wizard_step ?? 1)));
         const { data: d } = await supabase
           .from("case_documents")
-          .select("id, doc_type, file_name, ocr_extracted_at, extracted_data")
+          .select("id, doc_type, file_name, ocr_extracted_at, extracted_data, extraction_error")
           .eq("case_id", search.draft);
         setDocs((d ?? []) as DocRow[]);
       }
@@ -196,8 +198,13 @@ function WizardPage() {
   );
 
   const canStep1 = !!(draft.client_name && draft.operadora && draft.plan_modality);
-  const hasNegativa = docs.some((d) => d.doc_type === "carta_negativa" && d.ocr_extracted_at);
-  const hasLaudo = docs.some((d) => d.doc_type === "laudo_medico" && d.ocr_extracted_at);
+  const docResolved = (docType: string) =>
+    docs.some(
+      (d) =>
+        d.doc_type === docType && (d.ocr_extracted_at != null || manualSkip.has(d.id)),
+    );
+  const hasNegativa = docResolved("carta_negativa");
+  const hasLaudo = docResolved("laudo_medico");
   const canStep2 = hasNegativa && hasLaudo;
   const canStep3 = !!(draft.cid && draft.procedure_requested && draft.denial_date && draft.comarca && draft.tribunal && draft.denial_category);
 
@@ -235,6 +242,57 @@ function WizardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
+  const runExtraction = useCallback(async (docId: string, docType: string) => {
+    setExtracting((s) => new Set(s).add(docId));
+    try {
+      await authedJson("/api/ia/extract-document", { case_document_id: docId });
+    } catch (e) {
+      // Server already persisted extraction_error; we'll see it after refresh.
+      console.error(e);
+    }
+    const { data: refreshed } = await supabase
+      .from("case_documents")
+      .select("id, doc_type, file_name, ocr_extracted_at, extracted_data, extraction_error")
+      .eq("id", docId)
+      .single();
+    if (refreshed) {
+      setDocs((prev) => prev.map((d) => (d.id === docId ? (refreshed as DocRow) : d)));
+      const ed = (refreshed as DocRow).extracted_data ?? {};
+      if (refreshed.ocr_extracted_at) {
+        if (docType === "carta_negativa") {
+          setDraft((d) => ({
+            ...d,
+            denial_date: d.denial_date ?? (ed.data_negativa as string) ?? undefined,
+            denial_reason: d.denial_reason ?? (ed.fundamento_negativa as string) ?? undefined,
+            procedure_requested: d.procedure_requested ?? (ed.procedimento_solicitado as string) ?? undefined,
+            cid: d.cid ?? (ed.cid_informado as string) ?? undefined,
+          }));
+        }
+        if (docType === "laudo_medico") {
+          setDraft((d) => ({
+            ...d,
+            cid: d.cid ?? (ed.cid as string) ?? undefined,
+            procedure_requested: d.procedure_requested ?? (ed.procedimento_indicado as string) ?? undefined,
+            prescription_date: d.prescription_date ?? (ed.data_emissao as string) ?? undefined,
+            urgency: d.urgency ?? ((ed.urgencia_declarada as boolean) ? "urgencia" : undefined),
+          }));
+        }
+        // Successful extraction clears any prior manual-skip flag
+        setManualSkip((s) => {
+          if (!s.has(docId)) return s;
+          const n = new Set(s);
+          n.delete(docId);
+          return n;
+        });
+      }
+    }
+    setExtracting((s) => { const n = new Set(s); n.delete(docId); return n; });
+  }, []);
+
+  const markManual = useCallback((docId: string) => {
+    setManualSkip((s) => new Set(s).add(docId));
+  }, []);
+
   async function uploadFile(file: File, docType: string) {
     let caseId = draft.id;
     if (!caseId) caseId = await persist({}, 2);
@@ -255,42 +313,10 @@ function WizardPage() {
     const { data: doc, error: insErr } = await supabase
       .from("case_documents")
       .insert({ case_id: caseId, doc_type: docType, file_path: path, file_name: file.name, file_size: file.size })
-      .select("id, doc_type, file_name, ocr_extracted_at, extracted_data").single();
+      .select("id, doc_type, file_name, ocr_extracted_at, extracted_data, extraction_error").single();
     if (insErr || !doc) return;
     setDocs((prev) => [...prev, doc as DocRow]);
-    setExtracting((s) => new Set(s).add(doc.id));
-
-    try {
-      await authedJson("/api/ia/extract-document", { case_document_id: doc.id });
-      const { data: refreshed } = await supabase
-        .from("case_documents")
-        .select("id, doc_type, file_name, ocr_extracted_at, extracted_data")
-        .eq("id", doc.id).single();
-      if (refreshed) {
-        setDocs((prev) => prev.map((d) => (d.id === doc.id ? (refreshed as DocRow) : d)));
-        // Pre-fill draft fields from extraction
-        const ed = (refreshed as DocRow).extracted_data ?? {};
-        if (docType === "carta_negativa") {
-          setDraft((d) => ({
-            ...d,
-            denial_date: d.denial_date ?? (ed.data_negativa as string) ?? undefined,
-            denial_reason: d.denial_reason ?? (ed.fundamento_negativa as string) ?? undefined,
-            procedure_requested: d.procedure_requested ?? (ed.procedimento_solicitado as string) ?? undefined,
-            cid: d.cid ?? (ed.cid_informado as string) ?? undefined,
-          }));
-        }
-        if (docType === "laudo_medico") {
-          setDraft((d) => ({
-            ...d,
-            cid: d.cid ?? (ed.cid as string) ?? undefined,
-            procedure_requested: d.procedure_requested ?? (ed.procedimento_indicado as string) ?? undefined,
-            prescription_date: d.prescription_date ?? (ed.data_emissao as string) ?? undefined,
-            urgency: d.urgency ?? ((ed.urgencia_declarada as boolean) ? "urgencia" : undefined),
-          }));
-        }
-      }
-    } catch (e) { console.error(e); }
-    finally { setExtracting((s) => { const n = new Set(s); n.delete(doc.id); return n; }); }
+    await runExtraction(doc.id, docType);
   }
 
   async function finalizeAndGenerate() {
@@ -325,7 +351,10 @@ function WizardPage() {
         <Step2
           docs={docs}
           extracting={extracting}
+          manualSkip={manualSkip}
           onUpload={uploadFile}
+          onRetry={runExtraction}
+          onMarkManual={markManual}
         />
       )}
       {step === 3 && (
@@ -455,8 +484,15 @@ function Step1({ draft, setDraft }: { draft: CaseDraft; setDraft: (u: (d: CaseDr
 }
 
 function Step2({
-  docs, extracting, onUpload,
-}: { docs: DocRow[]; extracting: Set<string>; onUpload: (f: File, t: string) => void }) {
+  docs, extracting, manualSkip, onUpload, onRetry, onMarkManual,
+}: {
+  docs: DocRow[];
+  extracting: Set<string>;
+  manualSkip: Set<string>;
+  onUpload: (f: File, t: string) => void;
+  onRetry: (docId: string, docType: string) => void;
+  onMarkManual: (docId: string) => void;
+}) {
   const [pendingFile, setPendingFile] = useState<File | null>(null);
 
   return (
@@ -466,22 +502,66 @@ function Step2({
           const items = docs.filter((d) => d.doc_type === t.v);
           const anyExtracting = items.some((i) => extracting.has(i.id));
           const anyExtracted = items.some((i) => i.ocr_extracted_at);
+          const anyError = items.some(
+            (i) => i.extraction_error && !i.ocr_extracted_at && !manualSkip.has(i.id),
+          );
           return (
             <div key={t.v} className="rounded-lg border border-border bg-surface-elevated p-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <span className="text-sm font-medium">{t.l}{t.required && " *"}</span>
                 {items.length === 0 && t.required && (
                   <span className="rounded bg-danger/15 px-1.5 py-0.5 text-[10px] font-medium text-danger">vazio</span>
                 )}
                 {anyExtracting && <Loader2 className="h-3.5 w-3.5 animate-spin text-info" />}
-                {anyExtracted && !anyExtracting && (
+                {anyError && !anyExtracting && (
+                  <span className="rounded bg-danger/15 px-1.5 py-0.5 text-[10px] font-medium text-danger">falha</span>
+                )}
+                {anyExtracted && !anyExtracting && !anyError && (
                   <span className="rounded bg-success/15 px-1.5 py-0.5 text-[10px] font-medium text-success">extraído</span>
                 )}
               </div>
-              <ul className="mt-2 space-y-1 text-xs text-text-tertiary">
-                {items.map((i) => (
-                  <li key={i.id} className="truncate">{i.file_name}</li>
-                ))}
+              <ul className="mt-2 space-y-2 text-xs text-text-tertiary">
+                {items.map((i) => {
+                  const isExtracting = extracting.has(i.id);
+                  const hasError =
+                    !!i.extraction_error && !i.ocr_extracted_at && !manualSkip.has(i.id);
+                  const skipped = manualSkip.has(i.id) && !i.ocr_extracted_at;
+                  return (
+                    <li key={i.id} className="space-y-1">
+                      <div className="truncate">{i.file_name}</div>
+                      {hasError && (
+                        <>
+                          <div className="flex items-start gap-1.5 text-[11px] text-danger">
+                            <AlertTriangle className="mt-0.5 h-3 w-3 flex-shrink-0" />
+                            <span className="leading-snug">{i.extraction_error}</span>
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            <button
+                              type="button"
+                              disabled={isExtracting}
+                              onClick={() => onRetry(i.id, t.v)}
+                              className="rounded border border-border bg-surface px-2 py-0.5 text-[11px] hover:border-primary hover:text-primary disabled:opacity-50"
+                            >
+                              Tentar novamente
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => onMarkManual(i.id)}
+                              className="rounded border border-border bg-surface px-2 py-0.5 text-[11px] hover:border-primary hover:text-primary"
+                            >
+                              Preencher manualmente
+                            </button>
+                          </div>
+                        </>
+                      )}
+                      {skipped && (
+                        <div className="text-[11px] text-warning">
+                          Será preenchido manualmente no próximo passo.
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
               <label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-border py-2 text-xs text-text-secondary hover:border-primary hover:text-primary">
                 <Upload className="h-3.5 w-3.5" /> Anexar
