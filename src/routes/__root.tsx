@@ -34,20 +34,27 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "Plataforma de IA para escritórios de direito médico. Do laudo à liminar em 48 horas.",
+          "Defere — IA jurídica especializada em negativas de planos de saúde. Do laudo à liminar em 48 horas. Análise, jurimetria e geração de peças para escritórios de direito médico.",
       },
       { name: "author", content: "Defere" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { property: "og:url", content: "https://defere.com.br" },
+      { property: "og:locale", content: "pt_BR" },
       { property: "og:title", content: "Defere — Inteligência jurídica em saúde suplementar" },
+      {
+        property: "og:description",
+        content:
+          "Do laudo à liminar em 48 horas. Análise de negativas de plano de saúde, jurimetria e geração de peças com IA.",
+      },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Defere — Inteligência jurídica em saúde suplementar" },
-      { name: "description", content: "Defere is a B2B SaaS platform that automates the analysis of health insurance coverage denials and generates comprehensive legal documentation for lawyers." },
-      { property: "og:description", content: "Defere is a B2B SaaS platform that automates the analysis of health insurance coverage denials and generates comprehensive legal documentation for lawyers." },
-      { name: "twitter:description", content: "Defere is a B2B SaaS platform that automates the analysis of health insurance coverage denials and generates comprehensive legal documentation for lawyers." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5041c031-6cb9-49c1-a62a-18c33a38fe95/id-preview-f0bc17f8--f751e5d3-39e9-4cd2-b492-5620facf2a10.lovable.app-1776810309076.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5041c031-6cb9-49c1-a62a-18c33a38fe95/id-preview-f0bc17f8--f751e5d3-39e9-4cd2-b492-5620facf2a10.lovable.app-1776810309076.png" },
+      {
+        name: "twitter:description",
+        content: "Do laudo à liminar em 48 horas. Para escritórios de direito médico.",
+      },
     ],
     links: [
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       {
         rel: "stylesheet",
         href: appCss,
