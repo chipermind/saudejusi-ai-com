@@ -40,11 +40,11 @@ export const Route = createFileRoute("/app")({
 });
 
 const navItems = [
-  { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/app/casos", label: "Casos", icon: FolderOpen, exact: false },
-  { to: "/app/jurimetria", label: "Jurimetria", icon: BarChart3, exact: false },
-  { to: "/app/jurisprudencia", label: "Jurisprudência", icon: BookOpen, exact: false },
-  { to: "/app/minutas", label: "Minutas", icon: FileText, exact: false },
+  { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true, disabled: false },
+  { to: "/app/casos", label: "Casos", icon: FolderOpen, exact: false, disabled: false },
+  { to: "/app/jurimetria", label: "Jurimetria", icon: BarChart3, exact: false, disabled: true },
+  { to: "/app/jurisprudencia", label: "Jurisprudência", icon: BookOpen, exact: false, disabled: true },
+  { to: "/app/minutas", label: "Minutas", icon: FileText, exact: false, disabled: true },
 ] as const;
 
 function AppLayout() {
@@ -104,11 +104,28 @@ function AppLayout() {
               ? location.pathname === item.to
               : location.pathname.startsWith(item.to);
             const Icon = item.icon;
+            const baseClass =
+              "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors";
+            if (item.disabled) {
+              return (
+                <div
+                  key={item.to}
+                  className={`${baseClass} cursor-not-allowed text-text-tertiary opacity-60`}
+                  title="Em breve"
+                >
+                  <Icon className="h-4 w-4" />
+                  <span>{item.label}</span>
+                  <span className="ml-auto text-[10px] uppercase tracking-wide">
+                    Em breve
+                  </span>
+                </div>
+              );
+            }
             return (
               <Link
                 key={item.to}
-                to={item.to}
-                className={`flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors ${
+                to={item.to as "/app" | "/app/casos"}
+                className={`${baseClass} ${
                   active
                     ? "bg-surface-elevated text-text-primary"
                     : "text-text-secondary hover:bg-surface-elevated hover:text-text-primary"

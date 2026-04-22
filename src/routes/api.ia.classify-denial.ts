@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { callAi, calcCostUsd } from "@/server/ai-gateway.server";
+import { callAiTask, calcCostUsd, modelForTask } from "@/server/ai-gateway.server";
 import { CLASSIFY_SYSTEM_PROMPT, CLASSIFY_TOOL_SCHEMA } from "@/server/ai-prompts.server";
 
 const corsHeaders = {
@@ -78,8 +78,8 @@ ${JSON.stringify(byType.protocolo ?? null, null, 2)}
 Classifique a negativa conforme instruções e retorne via função classify_denial.`;
 
         try {
-          const result = await callAi({
-            model: "google/gemini-2.5-pro",
+          const result = await callAiTask({
+            task: "reasoning",
             messages: [
               { role: "system", content: CLASSIFY_SYSTEM_PROMPT },
               { role: "user", content: userMsg },
@@ -132,7 +132,7 @@ Classifique a negativa conforme instruções e retorne via função classify_den
             law_firm_id: c.law_firm_id,
             case_id,
             call_type: "classify",
-            model: "google/gemini-2.5-pro",
+            model: modelForTask("reasoning"),
             success: false,
             error_message: msg,
           });
