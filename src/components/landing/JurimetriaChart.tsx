@@ -27,7 +27,7 @@ export function JurimetriaChart() {
             Reversão judicial — últimos 12 meses
           </h3>
         </div>
-        <span className="font-mono text-xs text-text-tertiary">n = 8.412 casos</span>
+        <span className="font-mono text-xs text-text-tertiary">Baseline v1 — estatística pública agregada</span>
       </div>
 
       <ResponsiveContainer width="100%" height={260}>
