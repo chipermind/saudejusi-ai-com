@@ -20,12 +20,17 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Plataforma de IA para escritórios de direito médico. Analisa negativas de plano de saúde, prevê o êxito do caso e gera o parecer, recurso à ANS e petição inicial com tutela de urgência.",
+          "Defere — IA jurídica especializada em negativas de planos de saúde. Do laudo à liminar em 48 horas. Análise, jurimetria e geração de peças para escritórios de direito médico.",
       },
       { property: "og:title", content: "Defere — Inteligência jurídica em saúde suplementar" },
       {
         property: "og:description",
-        content: "Do laudo à liminar em 48 horas. IA jurídica para direito médico.",
+        content: "Do laudo à liminar em 48 horas. Análise de negativas de plano de saúde, jurimetria e geração de peças com IA.",
+      },
+      { name: "twitter:title", content: "Defere — Inteligência jurídica em saúde suplementar" },
+      {
+        name: "twitter:description",
+        content: "Do laudo à liminar em 48 horas. Para escritórios de direito médico.",
       },
     ],
   }),
@@ -51,7 +56,6 @@ function LandingPage() {
 function Hero() {
   return (
     <section className="relative overflow-hidden border-b border-border">
-      {/* subtle radial */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/2 top-0 h-[600px] w-[1000px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
       </div>
@@ -70,7 +74,7 @@ function Hero() {
             escritórios que atuam com direito médico.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-3">
-            <Link to="/signup">
+            <Link to="/demo">
               <Button size="lg" className="h-11 px-6">
                 Solicitar demo <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
@@ -82,7 +86,7 @@ function Hero() {
             </a>
           </div>
           <p className="mt-10 text-xs text-text-tertiary">
-            Construído por e para advogados de direito médico. Beta fechado 2026.
+            Construído por e para advogados de direito médico. Beta fechado em andamento — acesso por convite.
           </p>
         </div>
 
@@ -150,7 +154,7 @@ function HowItWorks() {
       n: "02",
       icon: Sparkles,
       title: "Análise",
-      desc: "A IA classifica a negativa em uma das 20 categorias e cruza com jurisprudência atualizada.",
+      desc: "A IA classifica a negativa em uma das 16 categorias de recusa e cruza com a jurisprudência aplicável.",
     },
     {
       n: "03",
@@ -213,9 +217,9 @@ function Jurimetria() {
           </p>
           <ul className="mt-8 space-y-3 text-sm text-text-secondary">
             {[
-              "Base própria com 200 mil decisões em direito médico",
-              "Atualização diária a partir de DJEs e portais dos tribunais",
-              "Recortes por comarca, juízo e câmara",
+              "Baseline público v1 cobre as 16 categorias de negativa com estratificação por tribunal",
+              "Atualização trimestral conforme novas edições dos relatórios oficiais (CNJ, ANS, STJ)",
+              "Modelo evolui para jurimetria proprietária conforme escritórios utilizam a plataforma",
             ].map((item) => (
               <li key={item} className="flex items-start gap-3">
                 <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-success" />
@@ -232,14 +236,31 @@ function Jurimetria() {
 }
 
 /* ---------- Pricing ---------- */
+type Plan = {
+  name: string;
+  price: string;
+  desc: string;
+  features: string[];
+  highlighted: boolean;
+  cta: { label: string; to?: "/signup"; href?: string };
+};
+
 function Pricing() {
-  const plans = [
+  const plans: Plan[] = [
     {
       name: "Solo",
       price: "R$ 497",
       desc: "Para o advogado individual.",
-      features: ["1 advogado", "20 casos por mês", "Todas as features core", "Suporte por email"],
+      features: [
+        "1 advogado",
+        "Até 20 casos por mês",
+        "Wizard completo de análise",
+        "Geração de parecer, recurso ANS, notificação e petição",
+        "Jurimetria baseline",
+        "Suporte por email",
+      ],
       highlighted: false,
+      cta: { label: "Começar 14 dias grátis", to: "/signup" },
     },
     {
       name: "Escritório",
@@ -248,10 +269,13 @@ function Pricing() {
       features: [
         "Até 5 advogados",
         "Casos ilimitados",
-        "Jurimetria avançada",
+        "Tudo do plano Solo",
+        "Jurimetria avançada por tribunal e operadora",
+        "Biblioteca de minutas editáveis",
         "Suporte prioritário",
       ],
       highlighted: true,
+      cta: { label: "Começar 14 dias grátis", to: "/signup" },
     },
     {
       name: "Enterprise",
@@ -259,11 +283,19 @@ function Pricing() {
       desc: "Para operações de alto volume.",
       features: [
         "6+ advogados",
+        "Tudo do plano Escritório",
+        "Jurimetria proprietária do escritório",
         "API de integração",
         "White-label",
-        "Integração PJe",
+        "Integração PJe (2º semestre 2026)",
+        "SLA dedicado",
       ],
       highlighted: false,
+      cta: {
+        label: "Falar com vendas",
+        href:
+          "mailto:contato@defere.com.br?subject=Defere%20Enterprise%20%E2%80%94%20solicita%C3%A7%C3%A3o%20de%20proposta",
+      },
     },
   ];
 
@@ -275,9 +307,7 @@ function Pricing() {
           <h2 className="mt-4 text-4xl font-semibold tracking-tight text-text-primary">
             Um plano por porte de escritório.
           </h2>
-          <p className="mt-4 text-base text-text-secondary">
-            14 dias grátis, sem cartão.
-          </p>
+          <p className="mt-4 text-base text-text-secondary">14 dias grátis, sem cartão.</p>
         </div>
 
         <div className="mt-16 grid gap-6 md:grid-cols-3">
@@ -315,17 +345,38 @@ function Pricing() {
                   </li>
                 ))}
               </ul>
-              <Link to="/signup" className="mt-auto">
-                <Button
-                  className="w-full"
-                  variant={p.highlighted ? "default" : "secondary"}
-                >
-                  Começar 14 dias grátis
-                </Button>
-              </Link>
+              <div className="mt-auto">
+                {p.cta.href ? (
+                  <a href={p.cta.href}>
+                    <Button
+                      className="w-full"
+                      variant={p.highlighted ? "default" : "secondary"}
+                    >
+                      {p.cta.label}
+                    </Button>
+                  </a>
+                ) : (
+                  <Link to={p.cta.to ?? "/signup"}>
+                    <Button
+                      className="w-full"
+                      variant={p.highlighted ? "default" : "secondary"}
+                    >
+                      {p.cta.label}
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </Card>
           ))}
         </div>
+
+        <p
+          className="mx-auto mt-12 max-w-[600px] text-center leading-relaxed text-text-secondary"
+          style={{ fontSize: "15px" }}
+        >
+          Um único caso ganho com honorários médios de R$ 3.000 cobre mais de uma anuidade do
+          plano Escritório. A maioria dos escritórios recupera o investimento no primeiro mês.
+        </p>
       </div>
     </section>
   );
@@ -336,23 +387,23 @@ function Faq() {
   const items = [
     {
       q: "A IA substitui o advogado?",
-      a: "Não. O Defere é uma ferramenta de apoio que acelera o trabalho técnico — classificação da negativa, levantamento de jurisprudência, redação inicial das peças. Toda peça gerada deve ser revisada pelo advogado responsável antes de qualquer protocolo.",
+      a: "Não. O Defere é ferramenta de apoio à atividade advocatícia. Toda peça gerada é minuta e precisa de revisão técnica, ajuste ao caso concreto e assinatura de advogado habilitado. A plataforma automatiza o trabalho operacional — leitura de documentos, classificação da negativa, pesquisa de precedentes, montagem da estrutura da petição — para que você foque na estratégia e na revisão crítica.",
     },
     {
       q: "Como vocês garantem LGPD com dados de saúde?",
-      a: "Dados são criptografados em trânsito e em repouso. Acesso restrito por escritório (cada cliente vê apenas seus próprios casos). Servidores em território nacional. Termo de uso prevê que o controlador dos dados é o escritório — o Defere atua como operador.",
+      a: "Dados de saúde são classificados como sensíveis pela LGPD (art. 11). Operamos com base legal de tutela da saúde combinada com consentimento do titular, criptografia em repouso e em trânsito, isolamento por escritório via Row Level Security, logs de auditoria de todos os acessos e retenção limitada ao período necessário. Assinamos DPA com todos os subprocessadores. DPO designado.",
     },
     {
       q: "De onde vem a base de jurisprudência?",
-      a: "Coletamos diariamente acórdãos publicados nos portais dos tribunais estaduais e regionais federais, além de decisões monocráticas em direito médico. A base é classificada manualmente em uma camada de qualidade antes de entrar no modelo.",
+      a: "A versão atual opera com baseline estatístico construído a partir de fontes públicas agregadas (Justiça em Números do CNJ, relatórios setoriais da ANS e pesquisa jurisprudencial em portais oficiais dos tribunais). Conforme escritórios utilizam a plataforma, dados anonimizados dos casos realimentam o modelo, evoluindo para jurimetria proprietária. Transparência total sobre a versão do modelo em uso.",
     },
     {
       q: "Posso integrar com o PJe?",
-      a: "Integração com PJe está disponível no plano Enterprise. Para os planos Solo e Escritório, oferecemos exportação dos documentos prontos em .docx e .pdf para protocolo manual.",
+      a: "Não na versão atual. Integração com PJe e outros sistemas de tribunal está no roadmap do plano Enterprise para o segundo semestre de 2026. Hoje, as peças são exportadas em .docx editável, prontas para protocolo manual ou para importação em qualquer ferramenta de peticionamento eletrônico.",
     },
     {
       q: "O escritório vira cliente exclusivo de vocês?",
-      a: "Não. Não há cláusula de exclusividade. Você cancela a qualquer momento e pode exportar todo o histórico dos seus casos a qualquer tempo, em formato aberto.",
+      a: "Não. Você não precisa mudar seu software de gestão, seu CRM ou seu fluxo atual. O Defere é uma camada especializada em direito médico que se soma ao seu stack — não substitui Projuris, Astrea, Legal One ou qualquer outro sistema de gestão.",
     },
   ];
   return (
@@ -364,11 +415,7 @@ function Faq() {
         </h2>
         <Accordion type="single" collapsible className="mt-12">
           {items.map((it, i) => (
-            <AccordionItem
-              key={i}
-              value={`item-${i}`}
-              className="border-border"
-            >
+            <AccordionItem key={i} value={`item-${i}`} className="border-border">
               <AccordionTrigger className="text-left text-base font-medium text-text-primary hover:no-underline">
                 {it.q}
               </AccordionTrigger>
