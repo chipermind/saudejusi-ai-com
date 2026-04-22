@@ -39,33 +39,64 @@ function CaseDetailPage() {
   const [dels, setDels] = useState<DelRow[]>([]);
 
   useEffect(() => {
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let cancelled = false;
+
     (async () => {
       const { data: caseRow } = await supabase.from("cases").select("*").eq("id", id).single();
+      if (cancelled) return;
       if (caseRow) setC(caseRow as CaseRow);
       const { data: d } = await supabase
         .from("case_documents").select("id, doc_type, file_name").eq("case_id", id);
+      if (cancelled) return;
       setDocs((d ?? []) as DocRow[]);
       const { data: dd } = await supabase
         .from("case_deliverables")
         .select("id, deliverable_type, status, content, error_message")
         .eq("case_id", id);
+      if (cancelled) return;
       setDels((dd ?? []) as DelRow[]);
+
+      // Resolve user's law firm to scope the realtime channel topic.
+      // Realtime authorization policy on `realtime.messages` only allows
+      // subscriptions to `case_deliverables:firm:<law_firm_id>`.
+      const { data: userRes } = await supabase.auth.getUser();
+      const uid = userRes.user?.id;
+      if (!uid) return;
+      const { data: lawyer } = await supabase
+        .from("lawyers")
+        .select("law_firm_id")
+        .eq("id", uid)
+        .maybeSingle();
+      const firmId = lawyer?.law_firm_id;
+      if (!firmId || cancelled) return;
+
+      // Use Realtime Authorization (private channel). RLS on realtime.messages
+      // restricts subscribers to channels scoped to their own firm.
+      await supabase.realtime.setAuth();
+      channel = supabase
+        .channel(`case_deliverables:firm:${firmId}`, { config: { private: true } })
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "case_deliverables", filter: `case_id=eq.${id}` },
+          (payload) => {
+            const row = payload.new as DelRow;
+            setDels((prev) => {
+              const ix = prev.findIndex((p) => p.id === row.id);
+              if (ix === -1) return [...prev, row];
+              const next = [...prev];
+              next[ix] = row;
+              return next;
+            });
+          },
+        )
+        .subscribe();
     })();
 
-    const channel = supabase
-      .channel(`case-${id}-deliverables`)
-      .on("postgres_changes",
-        { event: "*", schema: "public", table: "case_deliverables", filter: `case_id=eq.${id}` },
-        (payload) => {
-          const row = payload.new as DelRow;
-          setDels((prev) => {
-            const ix = prev.findIndex((p) => p.id === row.id);
-            if (ix === -1) return [...prev, row];
-            const next = [...prev]; next[ix] = row; return next;
-          });
-        })
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      cancelled = true;
+      if (channel) supabase.removeChannel(channel);
+    };
   }, [id]);
 
   if (!c) return <div className="p-8 text-sm text-text-tertiary">Carregando…</div>;
