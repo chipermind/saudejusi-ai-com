@@ -105,6 +105,7 @@ interface DocRow {
   file_name: string | null;
   ocr_extracted_at: string | null;
   extracted_data: Record<string, unknown> | null;
+  extraction_error: string | null;
 }
 
 function WizardPage() {
@@ -114,6 +115,7 @@ function WizardPage() {
   const [draft, setDraft] = useState<CaseDraft>({});
   const [docs, setDocs] = useState<DocRow[]>([]);
   const [extracting, setExtracting] = useState<Set<string>>(new Set());
+  const [manualSkip, setManualSkip] = useState<Set<string>>(new Set());
   const [classifying, setClassifying] = useState(false);
   const [jurimetricsLoading, setJurimetricsLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
