@@ -28,12 +28,6 @@ export function SiteHeader() {
           >
             Preços
           </a>
-          <a
-            href="#blog"
-            className="text-sm text-text-secondary transition-colors hover:text-text-primary"
-          >
-            Blog
-          </a>
         </nav>
         <div className="flex items-center gap-2">
           <Link to="/login">
@@ -41,7 +35,7 @@ export function SiteHeader() {
               Entrar
             </Button>
           </Link>
-          <Link to="/signup">
+          <Link to="/demo">
             <Button size="sm">Solicitar demo</Button>
           </Link>
         </div>

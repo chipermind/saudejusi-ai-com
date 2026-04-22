@@ -35,7 +35,7 @@ export function HeroCaseCard() {
         <div className="mt-5 flex items-center gap-2 rounded-lg border border-success/20 bg-success/5 p-3">
           <div className="h-2 w-2 rounded-full bg-success" />
           <p className="text-xs text-text-secondary">
-            Kit jurídico pronto em <span className="font-medium text-text-primary">38 horas</span>
+            Kit jurídico pronto em <span className="font-medium text-text-primary">38h desde o upload</span>
           </p>
         </div>
       </div>
