@@ -40,11 +40,11 @@ export const Route = createFileRoute("/app")({
 });
 
 const navItems = [
-  { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/app/casos", label: "Casos", icon: FolderOpen, exact: false },
-  { to: "/app/jurimetria", label: "Jurimetria", icon: BarChart3, exact: false },
-  { to: "/app/jurisprudencia", label: "Jurisprudência", icon: BookOpen, exact: false },
-  { to: "/app/minutas", label: "Minutas", icon: FileText, exact: false },
+  { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true, disabled: false },
+  { to: "/app/casos", label: "Casos", icon: FolderOpen, exact: false, disabled: false },
+  { to: "/app/jurimetria", label: "Jurimetria", icon: BarChart3, exact: false, disabled: true },
+  { to: "/app/jurisprudencia", label: "Jurisprudência", icon: BookOpen, exact: false, disabled: true },
+  { to: "/app/minutas", label: "Minutas", icon: FileText, exact: false, disabled: true },
 ] as const;
 
 function AppLayout() {
