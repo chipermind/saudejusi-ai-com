@@ -2,7 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { callAiWithImage, calcCostUsd, modelForTask } from "@/server/ai-gateway.server";
+import {
+  callAiWithMedia,
+  calcCostUsd,
+  modelForTask,
+  type MediaMimeType,
+} from "@/server/ai-gateway.server";
 import { EXTRACTION_PROMPTS, EXTRACTION_SCHEMAS } from "@/server/ai-prompts.server";
 import { assertActiveFirm, sanitizeAiError } from "@/server/auth-firm.server";
 
@@ -11,6 +16,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
+
+const MAX_MEDIA_BYTES = 18 * 1024 * 1024; // 18MB — Gemini limit is ~20MB; leave headroom
 
 function authedClient(token: string) {
   return createClient<Database>(
@@ -21,6 +28,25 @@ function authedClient(token: string) {
       auth: { persistSession: false, autoRefreshToken: false },
     },
   );
+}
+
+function detectMime(fileName: string): MediaMimeType {
+  const n = fileName.toLowerCase();
+  if (n.endsWith(".pdf")) return "application/pdf";
+  if (n.endsWith(".png")) return "image/png";
+  if (n.endsWith(".webp")) return "image/webp";
+  return "image/jpeg";
+}
+
+function bytesToBase64(bytes: Uint8Array): string {
+  // Chunked to avoid stack overflow on large files via String.fromCharCode(...spread)
+  let binary = "";
+  const chunkSize = 8192;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.subarray(i, i + chunkSize);
+    binary += String.fromCharCode(...chunk);
+  }
+  return btoa(binary);
 }
 
 async function logCall(args: {
@@ -94,27 +120,58 @@ export const Route = createFileRoute("/api/ia/extract-document")({
           .maybeSingle();
         const firmId = lawyer?.law_firm_id ?? null;
 
-        // Sign URL for the file (admin client, bucket is private)
-        const { data: signed, error: signErr } = await supabaseAdmin.storage
+        // Download the file directly via admin client (private bucket).
+        // Gemini processes PDFs natively, so no signed URL or PDF→image step is needed.
+        const { data: fileBlob, error: dlErr } = await supabaseAdmin.storage
           .from("case-documents")
-          .createSignedUrl(doc.file_path, 60 * 5);
-        if (signErr || !signed?.signedUrl) {
+          .download(doc.file_path);
+        if (dlErr || !fileBlob) {
+          const msg = `download failed: ${dlErr?.message ?? "unknown"}`;
+          await supabaseAdmin
+            .from("case_documents")
+            .update({ extraction_error: "Não foi possível baixar o arquivo." })
+            .eq("id", doc.id);
           await logCall({
             law_firm_id: firmId,
             case_id: doc.case_id,
             call_type: "ocr_extract",
             model: modelForTask("ocr"),
             success: false,
-            error_message: `sign url: ${signErr?.message}`,
+            error_message: msg,
           });
-          return json({ error: "could not sign file url" }, 500);
+          return json({ error: "could not download file" }, 500);
         }
 
+        const arrayBuffer = await fileBlob.arrayBuffer();
+        const bytes = new Uint8Array(arrayBuffer);
+
+        if (bytes.length > MAX_MEDIA_BYTES) {
+          const sizeMB = (bytes.length / (1024 * 1024)).toFixed(1);
+          const errMsg = `Arquivo muito grande (${sizeMB}MB). Máximo suportado: 18MB.`;
+          await supabaseAdmin
+            .from("case_documents")
+            .update({ extraction_error: errMsg })
+            .eq("id", doc.id);
+          await logCall({
+            law_firm_id: firmId,
+            case_id: doc.case_id,
+            call_type: "ocr_extract",
+            model: modelForTask("ocr"),
+            success: false,
+            error_message: errMsg,
+          });
+          return json({ error: "file_too_large" }, 400);
+        }
+
+        const base64 = bytesToBase64(bytes);
+        const mimeType = detectMime(doc.file_name ?? doc.file_path);
+
         try {
-          const result = await callAiWithImage({
+          const result = await callAiWithMedia({
             task: "ocr",
             prompt,
-            imageUrl: signed.signedUrl,
+            mediaBase64: base64,
+            mediaMimeType: mimeType,
             tools: [
               {
                 type: "function",
@@ -138,6 +195,7 @@ export const Route = createFileRoute("/api/ia/extract-document")({
             .update({
               extracted_data: extracted as never,
               ocr_extracted_at: new Date().toISOString(),
+              extraction_error: null,
             })
             .eq("id", doc.id);
 
@@ -156,6 +214,18 @@ export const Route = createFileRoute("/api/ia/extract-document")({
           return json({ extracted });
         } catch (err) {
           const msg = err instanceof Error ? err.message : "unknown";
+          const userMsg =
+            msg === "AI_RATE_LIMITED"
+              ? "Limite de requisições atingido. Tente novamente em instantes."
+              : msg === "AI_PAYMENT_REQUIRED"
+                ? "Créditos da IA esgotados. Adicione créditos para continuar."
+                : "Falha ao extrair dados. Você pode tentar novamente ou preencher manualmente.";
+
+          await supabaseAdmin
+            .from("case_documents")
+            .update({ extraction_error: userMsg })
+            .eq("id", doc.id);
+
           await logCall({
             law_firm_id: firmId,
             case_id: doc.case_id,
