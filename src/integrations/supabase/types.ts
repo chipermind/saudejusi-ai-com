@@ -133,6 +133,7 @@ export type Database = {
           case_id: string | null
           doc_type: string | null
           extracted_data: Json | null
+          extraction_error: string | null
           file_name: string | null
           file_path: string
           file_size: number | null
@@ -144,6 +145,7 @@ export type Database = {
           case_id?: string | null
           doc_type?: string | null
           extracted_data?: Json | null
+          extraction_error?: string | null
           file_name?: string | null
           file_path: string
           file_size?: number | null
@@ -155,6 +157,7 @@ export type Database = {
           case_id?: string | null
           doc_type?: string | null
           extracted_data?: Json | null
+          extraction_error?: string | null
           file_name?: string | null
           file_path?: string
           file_size?: number | null
