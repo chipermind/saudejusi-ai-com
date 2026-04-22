@@ -146,3 +146,49 @@ export function tryParseJson<T = unknown>(s: string): T | null {
     return null;
   }
 }
+
+// ─── Task-based wrappers (preferred entrypoints) ───────────────────────────
+
+export type AiTaskParams = Omit<AiCallParams, "model"> & { task: LLMTask };
+
+/**
+ * Call the gateway by semantic task. Routes should use this instead of
+ * passing a hardcoded model. Swapping providers becomes a one-line change.
+ */
+export async function callAiTask(params: AiTaskParams): Promise<AiResult> {
+  const { task, ...rest } = params;
+  return callAi({ ...rest, model: modelForTask(task) });
+}
+
+/**
+ * Vision helper: send a single image (URL or data: URI) plus a text prompt.
+ * Uses the OpenAI-compatible multimodal content array supported by the gateway.
+ */
+export async function callAiWithImage(params: {
+  task: LLMTask;
+  prompt: string;
+  imageUrl: string; // https://... or data:<mime>;base64,<b64>
+  system?: string;
+  max_tokens?: number;
+  temperature?: number;
+  tools?: AiCallParams["tools"];
+  tool_choice?: AiCallParams["tool_choice"];
+}): Promise<AiResult> {
+  const messages: ChatContent[] = [];
+  if (params.system) messages.push({ role: "system", content: params.system });
+  messages.push({
+    role: "user",
+    content: [
+      { type: "text", text: params.prompt },
+      { type: "image_url", image_url: { url: params.imageUrl } },
+    ],
+  });
+  return callAi({
+    model: modelForTask(params.task),
+    messages,
+    max_tokens: params.max_tokens,
+    temperature: params.temperature,
+    tools: params.tools,
+    tool_choice: params.tool_choice,
+  });
+}
