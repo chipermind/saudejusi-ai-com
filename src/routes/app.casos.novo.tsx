@@ -484,8 +484,15 @@ function Step1({ draft, setDraft }: { draft: CaseDraft; setDraft: (u: (d: CaseDr
 }
 
 function Step2({
-  docs, extracting, onUpload,
-}: { docs: DocRow[]; extracting: Set<string>; onUpload: (f: File, t: string) => void }) {
+  docs, extracting, manualSkip, onUpload, onRetry, onMarkManual,
+}: {
+  docs: DocRow[];
+  extracting: Set<string>;
+  manualSkip: Set<string>;
+  onUpload: (f: File, t: string) => void;
+  onRetry: (docId: string, docType: string) => void;
+  onMarkManual: (docId: string) => void;
+}) {
   const [pendingFile, setPendingFile] = useState<File | null>(null);
 
   return (
@@ -495,22 +502,66 @@ function Step2({
           const items = docs.filter((d) => d.doc_type === t.v);
           const anyExtracting = items.some((i) => extracting.has(i.id));
           const anyExtracted = items.some((i) => i.ocr_extracted_at);
+          const anyError = items.some(
+            (i) => i.extraction_error && !i.ocr_extracted_at && !manualSkip.has(i.id),
+          );
           return (
             <div key={t.v} className="rounded-lg border border-border bg-surface-elevated p-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <span className="text-sm font-medium">{t.l}{t.required && " *"}</span>
                 {items.length === 0 && t.required && (
                   <span className="rounded bg-danger/15 px-1.5 py-0.5 text-[10px] font-medium text-danger">vazio</span>
                 )}
                 {anyExtracting && <Loader2 className="h-3.5 w-3.5 animate-spin text-info" />}
-                {anyExtracted && !anyExtracting && (
+                {anyError && !anyExtracting && (
+                  <span className="rounded bg-danger/15 px-1.5 py-0.5 text-[10px] font-medium text-danger">falha</span>
+                )}
+                {anyExtracted && !anyExtracting && !anyError && (
                   <span className="rounded bg-success/15 px-1.5 py-0.5 text-[10px] font-medium text-success">extraído</span>
                 )}
               </div>
-              <ul className="mt-2 space-y-1 text-xs text-text-tertiary">
-                {items.map((i) => (
-                  <li key={i.id} className="truncate">{i.file_name}</li>
-                ))}
+              <ul className="mt-2 space-y-2 text-xs text-text-tertiary">
+                {items.map((i) => {
+                  const isExtracting = extracting.has(i.id);
+                  const hasError =
+                    !!i.extraction_error && !i.ocr_extracted_at && !manualSkip.has(i.id);
+                  const skipped = manualSkip.has(i.id) && !i.ocr_extracted_at;
+                  return (
+                    <li key={i.id} className="space-y-1">
+                      <div className="truncate">{i.file_name}</div>
+                      {hasError && (
+                        <>
+                          <div className="flex items-start gap-1.5 text-[11px] text-danger">
+                            <AlertTriangle className="mt-0.5 h-3 w-3 flex-shrink-0" />
+                            <span className="leading-snug">{i.extraction_error}</span>
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            <button
+                              type="button"
+                              disabled={isExtracting}
+                              onClick={() => onRetry(i.id, t.v)}
+                              className="rounded border border-border bg-surface px-2 py-0.5 text-[11px] hover:border-primary hover:text-primary disabled:opacity-50"
+                            >
+                              Tentar novamente
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => onMarkManual(i.id)}
+                              className="rounded border border-border bg-surface px-2 py-0.5 text-[11px] hover:border-primary hover:text-primary"
+                            >
+                              Preencher manualmente
+                            </button>
+                          </div>
+                        </>
+                      )}
+                      {skipped && (
+                        <div className="text-[11px] text-warning">
+                          Será preenchido manualmente no próximo passo.
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
               <label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-border py-2 text-xs text-text-secondary hover:border-primary hover:text-primary">
                 <Upload className="h-3.5 w-3.5" /> Anexar
