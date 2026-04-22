@@ -1,5 +1,10 @@
 // Lovable AI Gateway helpers — SERVER ONLY.
 // Do not import from client code.
+//
+// Provider-agnostic abstraction: routes are expected to call `callAiTask`
+// using a semantic LLMTask (ocr | reasoning | generation) instead of a
+// concrete model id. To swap providers (e.g. migrate to Anthropic Claude),
+// change only TASK_TO_MODEL + the underlying transport — no changes in routes.
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
@@ -8,6 +13,19 @@ export type AiModel =
   | "google/gemini-2.5-flash"
   | "google/gemini-2.5-flash-lite"
   | "google/gemini-3-flash-preview";
+
+// Semantic task → concrete model. Single source of truth.
+export type LLMTask = "ocr" | "reasoning" | "generation";
+
+const TASK_TO_MODEL: Record<LLMTask, AiModel> = {
+  ocr: "google/gemini-2.5-flash",
+  reasoning: "google/gemini-2.5-pro",
+  generation: "google/gemini-2.5-pro",
+};
+
+export function modelForTask(task: LLMTask): AiModel {
+  return TASK_TO_MODEL[task];
+}
 
 export interface ChatContent {
   role: "system" | "user" | "assistant";
