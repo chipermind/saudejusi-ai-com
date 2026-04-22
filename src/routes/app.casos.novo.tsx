@@ -351,7 +351,10 @@ function WizardPage() {
         <Step2
           docs={docs}
           extracting={extracting}
+          manualSkip={manualSkip}
           onUpload={uploadFile}
+          onRetry={runExtraction}
+          onMarkManual={markManual}
         />
       )}
       {step === 3 && (
