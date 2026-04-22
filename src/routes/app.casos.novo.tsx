@@ -242,6 +242,57 @@ function WizardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
+  const runExtraction = useCallback(async (docId: string, docType: string) => {
+    setExtracting((s) => new Set(s).add(docId));
+    try {
+      await authedJson("/api/ia/extract-document", { case_document_id: docId });
+    } catch (e) {
+      // Server already persisted extraction_error; we'll see it after refresh.
+      console.error(e);
+    }
+    const { data: refreshed } = await supabase
+      .from("case_documents")
+      .select("id, doc_type, file_name, ocr_extracted_at, extracted_data, extraction_error")
+      .eq("id", docId)
+      .single();
+    if (refreshed) {
+      setDocs((prev) => prev.map((d) => (d.id === docId ? (refreshed as DocRow) : d)));
+      const ed = (refreshed as DocRow).extracted_data ?? {};
+      if (refreshed.ocr_extracted_at) {
+        if (docType === "carta_negativa") {
+          setDraft((d) => ({
+            ...d,
+            denial_date: d.denial_date ?? (ed.data_negativa as string) ?? undefined,
+            denial_reason: d.denial_reason ?? (ed.fundamento_negativa as string) ?? undefined,
+            procedure_requested: d.procedure_requested ?? (ed.procedimento_solicitado as string) ?? undefined,
+            cid: d.cid ?? (ed.cid_informado as string) ?? undefined,
+          }));
+        }
+        if (docType === "laudo_medico") {
+          setDraft((d) => ({
+            ...d,
+            cid: d.cid ?? (ed.cid as string) ?? undefined,
+            procedure_requested: d.procedure_requested ?? (ed.procedimento_indicado as string) ?? undefined,
+            prescription_date: d.prescription_date ?? (ed.data_emissao as string) ?? undefined,
+            urgency: d.urgency ?? ((ed.urgencia_declarada as boolean) ? "urgencia" : undefined),
+          }));
+        }
+        // Successful extraction clears any prior manual-skip flag
+        setManualSkip((s) => {
+          if (!s.has(docId)) return s;
+          const n = new Set(s);
+          n.delete(docId);
+          return n;
+        });
+      }
+    }
+    setExtracting((s) => { const n = new Set(s); n.delete(docId); return n; });
+  }, []);
+
+  const markManual = useCallback((docId: string) => {
+    setManualSkip((s) => new Set(s).add(docId));
+  }, []);
+
   async function uploadFile(file: File, docType: string) {
     let caseId = draft.id;
     if (!caseId) caseId = await persist({}, 2);
@@ -262,42 +313,10 @@ function WizardPage() {
     const { data: doc, error: insErr } = await supabase
       .from("case_documents")
       .insert({ case_id: caseId, doc_type: docType, file_path: path, file_name: file.name, file_size: file.size })
-      .select("id, doc_type, file_name, ocr_extracted_at, extracted_data").single();
+      .select("id, doc_type, file_name, ocr_extracted_at, extracted_data, extraction_error").single();
     if (insErr || !doc) return;
     setDocs((prev) => [...prev, doc as DocRow]);
-    setExtracting((s) => new Set(s).add(doc.id));
-
-    try {
-      await authedJson("/api/ia/extract-document", { case_document_id: doc.id });
-      const { data: refreshed } = await supabase
-        .from("case_documents")
-        .select("id, doc_type, file_name, ocr_extracted_at, extracted_data")
-        .eq("id", doc.id).single();
-      if (refreshed) {
-        setDocs((prev) => prev.map((d) => (d.id === doc.id ? (refreshed as DocRow) : d)));
-        // Pre-fill draft fields from extraction
-        const ed = (refreshed as DocRow).extracted_data ?? {};
-        if (docType === "carta_negativa") {
-          setDraft((d) => ({
-            ...d,
-            denial_date: d.denial_date ?? (ed.data_negativa as string) ?? undefined,
-            denial_reason: d.denial_reason ?? (ed.fundamento_negativa as string) ?? undefined,
-            procedure_requested: d.procedure_requested ?? (ed.procedimento_solicitado as string) ?? undefined,
-            cid: d.cid ?? (ed.cid_informado as string) ?? undefined,
-          }));
-        }
-        if (docType === "laudo_medico") {
-          setDraft((d) => ({
-            ...d,
-            cid: d.cid ?? (ed.cid as string) ?? undefined,
-            procedure_requested: d.procedure_requested ?? (ed.procedimento_indicado as string) ?? undefined,
-            prescription_date: d.prescription_date ?? (ed.data_emissao as string) ?? undefined,
-            urgency: d.urgency ?? ((ed.urgencia_declarada as boolean) ? "urgencia" : undefined),
-          }));
-        }
-      }
-    } catch (e) { console.error(e); }
-    finally { setExtracting((s) => { const n = new Set(s); n.delete(doc.id); return n; }); }
+    await runExtraction(doc.id, docType);
   }
 
   async function finalizeAndGenerate() {
