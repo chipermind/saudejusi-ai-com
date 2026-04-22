@@ -133,7 +133,7 @@ function WizardPage() {
         setStep(Math.min(4, Math.max(1, (data as { wizard_step?: number }).wizard_step ?? 1)));
         const { data: d } = await supabase
           .from("case_documents")
-          .select("id, doc_type, file_name, ocr_extracted_at, extracted_data")
+          .select("id, doc_type, file_name, ocr_extracted_at, extracted_data, extraction_error")
           .eq("case_id", search.draft);
         setDocs((d ?? []) as DocRow[]);
       }
@@ -198,8 +198,13 @@ function WizardPage() {
   );
 
   const canStep1 = !!(draft.client_name && draft.operadora && draft.plan_modality);
-  const hasNegativa = docs.some((d) => d.doc_type === "carta_negativa" && d.ocr_extracted_at);
-  const hasLaudo = docs.some((d) => d.doc_type === "laudo_medico" && d.ocr_extracted_at);
+  const docResolved = (docType: string) =>
+    docs.some(
+      (d) =>
+        d.doc_type === docType && (d.ocr_extracted_at != null || manualSkip.has(d.id)),
+    );
+  const hasNegativa = docResolved("carta_negativa");
+  const hasLaudo = docResolved("laudo_medico");
   const canStep2 = hasNegativa && hasLaudo;
   const canStep3 = !!(draft.cid && draft.procedure_requested && draft.denial_date && draft.comarca && draft.tribunal && draft.denial_category);
 
