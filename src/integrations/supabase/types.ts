@@ -280,6 +280,39 @@ export type Database = {
           },
         ]
       }
+      demo_requests: {
+        Row: {
+          created_at: string
+          email: string
+          firm_name: string
+          full_name: string
+          id: string
+          message: string | null
+          team_size: string
+          whatsapp: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          firm_name: string
+          full_name: string
+          id?: string
+          message?: string | null
+          team_size: string
+          whatsapp: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          firm_name?: string
+          full_name?: string
+          id?: string
+          message?: string | null
+          team_size?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       law_firms: {
         Row: {
           cnpj: string | null
