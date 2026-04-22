@@ -4,6 +4,7 @@ import type { Database } from "@/integrations/supabase/types";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { callAiTask, calcCostUsd, modelForTask } from "@/server/ai-gateway.server";
 import { CLASSIFY_SYSTEM_PROMPT, CLASSIFY_TOOL_SCHEMA } from "@/server/ai-prompts.server";
+import { assertActiveFirm, sanitizeAiError } from "@/server/auth-firm.server";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -32,6 +33,9 @@ export const Route = createFileRoute("/api/ia/classify-denial")({
         const sb = authedClient(token);
         const { data: claims } = await sb.auth.getClaims(token);
         if (!claims?.claims?.sub) return json({ error: "unauthorized" }, 401);
+
+        const firmCheck = await assertActiveFirm(claims.claims.sub);
+        if (!firmCheck.ok) return json({ error: firmCheck.error }, firmCheck.status);
 
         const { case_id } = (await request.json().catch(() => ({}))) as { case_id?: string };
         if (!case_id) return json({ error: "case_id required" }, 400);
@@ -138,7 +142,7 @@ Classifique a negativa conforme instruções e retorne via função classify_den
           });
           if (msg === "AI_RATE_LIMITED") return json({ error: "rate_limited" }, 429);
           if (msg === "AI_PAYMENT_REQUIRED") return json({ error: "payment_required" }, 402);
-          return json({ error: msg }, 500);
+          return json({ error: sanitizeAiError(msg, "classify-denial") }, 500);
         }
       },
     },

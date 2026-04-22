@@ -4,6 +4,7 @@ import type { Database } from "@/integrations/supabase/types";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { callAiWithImage, calcCostUsd, modelForTask } from "@/server/ai-gateway.server";
 import { EXTRACTION_PROMPTS, EXTRACTION_SCHEMAS } from "@/server/ai-prompts.server";
+import { assertActiveFirm, sanitizeAiError } from "@/server/auth-firm.server";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -64,6 +65,9 @@ export const Route = createFileRoute("/api/ia/extract-document")({
         const sb = authedClient(token);
         const { data: claims } = await sb.auth.getClaims(token);
         if (!claims?.claims?.sub) return json({ error: "unauthorized" }, 401);
+
+        const firmCheck = await assertActiveFirm(claims.claims.sub);
+        if (!firmCheck.ok) return json({ error: firmCheck.error }, firmCheck.status);
 
         const body = (await request.json().catch(() => ({}))) as {
           case_document_id?: string;
@@ -162,7 +166,7 @@ export const Route = createFileRoute("/api/ia/extract-document")({
           });
           if (msg === "AI_RATE_LIMITED") return json({ error: "rate_limited" }, 429);
           if (msg === "AI_PAYMENT_REQUIRED") return json({ error: "payment_required" }, 402);
-          return json({ error: msg }, 500);
+          return json({ error: sanitizeAiError(msg, "extract-document") }, 500);
         }
       },
     },

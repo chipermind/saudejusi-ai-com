@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { assertActiveFirm } from "@/server/auth-firm.server";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -37,6 +38,9 @@ export const Route = createFileRoute("/api/ia/generate-deliverable")({
         const sb = authedClient(token);
         const { data: claims } = await sb.auth.getClaims(token);
         if (!claims?.claims?.sub) return json({ error: "unauthorized" }, 401);
+
+        const firmCheck = await assertActiveFirm(claims.claims.sub);
+        if (!firmCheck.ok) return json({ error: firmCheck.error }, firmCheck.status);
 
         const { deliverable_id } = (await request.json().catch(() => ({}))) as {
           deliverable_id?: string;
