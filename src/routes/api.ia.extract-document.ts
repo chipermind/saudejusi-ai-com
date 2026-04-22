@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { callAi, calcCostUsd } from "@/server/ai-gateway.server";
+import { callAiWithImage, calcCostUsd, modelForTask } from "@/server/ai-gateway.server";
 import { EXTRACTION_PROMPTS, EXTRACTION_SCHEMAS } from "@/server/ai-prompts.server";
 
 const corsHeaders = {
@@ -99,7 +99,7 @@ export const Route = createFileRoute("/api/ia/extract-document")({
             law_firm_id: firmId,
             case_id: doc.case_id,
             call_type: "ocr_extract",
-            model: "google/gemini-2.5-flash",
+            model: modelForTask("ocr"),
             success: false,
             error_message: `sign url: ${signErr?.message}`,
           });
@@ -107,17 +107,10 @@ export const Route = createFileRoute("/api/ia/extract-document")({
         }
 
         try {
-          const result = await callAi({
-            model: "google/gemini-2.5-flash",
-            messages: [
-              {
-                role: "user",
-                content: [
-                  { type: "text", text: prompt },
-                  { type: "image_url", image_url: { url: signed.signedUrl } },
-                ],
-              },
-            ],
+          const result = await callAiWithImage({
+            task: "ocr",
+            prompt,
+            imageUrl: signed.signedUrl,
             tools: [
               {
                 type: "function",
@@ -163,7 +156,7 @@ export const Route = createFileRoute("/api/ia/extract-document")({
             law_firm_id: firmId,
             case_id: doc.case_id,
             call_type: "ocr_extract",
-            model: "google/gemini-2.5-flash",
+            model: modelForTask("ocr"),
             success: false,
             error_message: msg,
           });
