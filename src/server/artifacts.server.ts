@@ -12,7 +12,7 @@ const ENCODER = new TextEncoder();
 const DECODER = new TextDecoder();
 
 /** Cria um Uint8Array com ArrayBuffer próprio (não SharedArrayBuffer). */
-function newBytes(len: number): Uint8Array {
+function newBytes(len: number): Uint8Array<ArrayBuffer> {
   return new Uint8Array(new ArrayBuffer(len));
 }
 
