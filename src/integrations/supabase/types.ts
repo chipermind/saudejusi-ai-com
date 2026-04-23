@@ -74,6 +74,57 @@ export type Database = {
           },
         ]
       }
+      ai_prompt_runs: {
+        Row: {
+          confianca: string | null
+          cost_usd: number | null
+          created_at: string
+          fora_de_escopo: boolean
+          id: string
+          latency_ms: number | null
+          model: string
+          prompt_version: string
+          retry_count: number
+          task: string
+          tokens_in: number | null
+          tokens_out: number | null
+          user_id: string | null
+          validation_passed: boolean
+        }
+        Insert: {
+          confianca?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          fora_de_escopo?: boolean
+          id?: string
+          latency_ms?: number | null
+          model: string
+          prompt_version: string
+          retry_count?: number
+          task: string
+          tokens_in?: number | null
+          tokens_out?: number | null
+          user_id?: string | null
+          validation_passed?: boolean
+        }
+        Update: {
+          confianca?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          fora_de_escopo?: boolean
+          id?: string
+          latency_ms?: number | null
+          model?: string
+          prompt_version?: string
+          retry_count?: number
+          task?: string
+          tokens_in?: number | null
+          tokens_out?: number | null
+          user_id?: string | null
+          validation_passed?: boolean
+        }
+        Relationships: []
+      }
       case_deliverables: {
         Row: {
           case_id: string | null
