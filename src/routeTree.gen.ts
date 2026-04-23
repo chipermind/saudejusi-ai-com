@@ -9,8 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WaitlistRouteImport } from './routes/waitlist'
 import { Route as TermosRouteImport } from './routes/termos'
-import { Route as SignupRouteImport } from './routes/signup'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as LoginRouteImport } from './routes/login'
@@ -28,14 +28,14 @@ import { Route as ApiIaExtractDocumentRouteImport } from './routes/api.ia.extrac
 import { Route as ApiIaEstimateJurimetricsRouteImport } from './routes/api.ia.estimate-jurimetrics'
 import { Route as ApiIaClassifyDenialRouteImport } from './routes/api.ia.classify-denial'
 
+const WaitlistRoute = WaitlistRouteImport.update({
+  id: '/waitlist',
+  path: '/waitlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
   path: '/termos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
@@ -130,8 +130,8 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
-  '/signup': typeof SignupRoute
   '/termos': typeof TermosRoute
+  '/waitlist': typeof WaitlistRoute
   '/app/': typeof AppIndexRoute
   '/api/ia/classify-denial': typeof ApiIaClassifyDenialRoute
   '/api/ia/estimate-jurimetrics': typeof ApiIaEstimateJurimetricsRoute
@@ -149,8 +149,8 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
-  '/signup': typeof SignupRoute
   '/termos': typeof TermosRoute
+  '/waitlist': typeof WaitlistRoute
   '/app': typeof AppIndexRoute
   '/api/ia/classify-denial': typeof ApiIaClassifyDenialRoute
   '/api/ia/estimate-jurimetrics': typeof ApiIaEstimateJurimetricsRoute
@@ -170,8 +170,8 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
-  '/signup': typeof SignupRoute
   '/termos': typeof TermosRoute
+  '/waitlist': typeof WaitlistRoute
   '/app/': typeof AppIndexRoute
   '/api/ia/classify-denial': typeof ApiIaClassifyDenialRoute
   '/api/ia/estimate-jurimetrics': typeof ApiIaEstimateJurimetricsRoute
@@ -192,8 +192,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/redefinir-senha'
-    | '/signup'
     | '/termos'
+    | '/waitlist'
     | '/app/'
     | '/api/ia/classify-denial'
     | '/api/ia/estimate-jurimetrics'
@@ -211,8 +211,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/redefinir-senha'
-    | '/signup'
     | '/termos'
+    | '/waitlist'
     | '/app'
     | '/api/ia/classify-denial'
     | '/api/ia/estimate-jurimetrics'
@@ -231,8 +231,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/redefinir-senha'
-    | '/signup'
     | '/termos'
+    | '/waitlist'
     | '/app/'
     | '/api/ia/classify-denial'
     | '/api/ia/estimate-jurimetrics'
@@ -252,8 +252,8 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
-  SignupRoute: typeof SignupRoute
   TermosRoute: typeof TermosRoute
+  WaitlistRoute: typeof WaitlistRoute
   ApiIaClassifyDenialRoute: typeof ApiIaClassifyDenialRoute
   ApiIaEstimateJurimetricsRoute: typeof ApiIaEstimateJurimetricsRoute
   ApiIaExtractDocumentRoute: typeof ApiIaExtractDocumentRoute
@@ -262,18 +262,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/waitlist': {
+      id: '/waitlist'
+      path: '/waitlist'
+      fullPath: '/waitlist'
+      preLoaderRoute: typeof WaitlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/termos': {
       id: '/termos'
       path: '/termos'
       fullPath: '/termos'
       preLoaderRoute: typeof TermosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/redefinir-senha': {
@@ -416,8 +416,8 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,
-  SignupRoute: SignupRoute,
   TermosRoute: TermosRoute,
+  WaitlistRoute: WaitlistRoute,
   ApiIaClassifyDenialRoute: ApiIaClassifyDenialRoute,
   ApiIaEstimateJurimetricsRoute: ApiIaEstimateJurimetricsRoute,
   ApiIaExtractDocumentRoute: ApiIaExtractDocumentRoute,

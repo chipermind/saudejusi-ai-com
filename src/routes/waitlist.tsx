@@ -28,7 +28,7 @@ const FIRM_SIZE_OPTIONS: { value: string; label: string }[] = [
   { value: "11+", label: "11+" },
 ];
 
-export const Route = createFileRoute("/signup")({
+export const Route = createFileRoute("/waitlist")({
   head: () => ({
     meta: [
       { title: "Entrar na waitlist — Defere" },
