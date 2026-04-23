@@ -5,8 +5,8 @@ import { SiteFooter } from "@/components/landing/SiteFooter";
 export const Route = createFileRoute("/privacidade")({
   head: () => ({
     meta: [
-      { title: "Política de Privacidade — Defere" },
-      { name: "description", content: "Política de Privacidade da plataforma Defere." },
+      { title: "Política de Privacidade — SaudeJusia" },
+      { name: "description", content: "Política de Privacidade da plataforma SaudeJusia." },
     ],
   }),
   component: PrivacidadePage,
@@ -25,10 +25,10 @@ function PrivacidadePage() {
           Documento em elaboração. Última atualização: abril/2026. Para dúvidas,
           escreva para{" "}
           <a
-            href="mailto:contato@defere.com.br"
+            href="mailto:privacidade@saudejusia.com.br"
             className="text-primary hover:text-primary/80"
           >
-            contato@defere.com.br
+            privacidade@saudejusia.com.br
           </a>
           .
         </p>

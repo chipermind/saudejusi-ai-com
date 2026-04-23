@@ -1,4 +1,4 @@
-// TODO: substituir depoimentos placeholders por citações reais dos pilotos do beta.
+// TODO: substituir depoimentos placeholders por citações reais dos beneficiários do beta.
 type Testimonial = {
   quote: string;
   initials: string;
@@ -9,24 +9,24 @@ type Testimonial = {
 const TESTIMONIALS: Testimonial[] = [
   {
     quote:
-      "Cortei pela metade o tempo de montagem de caso. O que eu fazia em 3 dias, saio com rascunho pronto na mesma tarde.",
-    initials: "MA",
-    name: "Dra. M. A.",
-    role: "Sócia em escritório boutique de direito médico, São Paulo/SP",
+      "Meu filho precisava de terapia ABA e o plano negou por 'falta de previsão'. Em 20 minutos eu tinha a NIP pronta. A operadora liberou em 6 dias.",
+    initials: "MR",
+    name: "M. R.",
+    role: "Mãe de beneficiário — Recife/PE",
   },
   {
     quote:
-      "A previsão de procedência por comarca me ajudou a calibrar expectativa com o cliente logo na primeira reunião. Mudou a conversa comercial.",
-    initials: "RT",
-    name: "Dr. R. T.",
-    role: "Advogado autônomo, Belo Horizonte/MG",
+      "Fui dispensada pelo advogado porque o caso 'era pequeno demais'. Com a SaudeJusia eu mesma fiz o recurso à ANS e ganhei.",
+    initials: "CL",
+    name: "C. L.",
+    role: "Beneficiária — Curitiba/PR",
   },
   {
     quote:
-      "Recurso administrativo à ANS era a parte que mais atrasava no meu fluxo. Agora sai em 20 minutos.",
-    initials: "CS",
-    name: "Dra. C. S.",
-    role: "Sócia de banca com 4 advogados, Recife/PE",
+      "Uso para acompanhar os pedidos de home care do meu pai. Os prazos da ANS eu nunca mais perdi.",
+    initials: "JA",
+    name: "J. A.",
+    role: "Filho cuidador — São Paulo/SP",
   },
 ];
 
@@ -67,8 +67,8 @@ export function Testimonials() {
         </div>
 
         <p className="mt-10 text-xs text-text-tertiary">
-          Depoimentos de escritórios participantes do beta fechado, com iniciais por
-          solicitação dos profissionais.
+          Depoimentos de participantes do beta fechado, identificados por iniciais a
+          pedido dos próprios usuários.
         </p>
       </div>
     </section>

@@ -10,8 +10,8 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Entrar — Defere" },
-      { name: "description", content: "Acesse sua conta no Defere." },
+      { title: "Entrar — SaudeJusia" },
+      { name: "description", content: "Acesse sua conta na SaudeJusia." },
     ],
   }),
   component: LoginPage,
@@ -62,9 +62,9 @@ function LoginPage() {
         </Link>
 
         <div className="rounded-xl border border-border bg-surface p-8">
-          <h1 className="text-xl font-semibold text-text-primary">Entrar no Defere</h1>
+          <h1 className="text-xl font-semibold text-text-primary">Entrar na SaudeJusia</h1>
           <p className="mt-1 text-sm text-text-tertiary">
-            Acesse o painel do seu escritório.
+            Acesse seu painel.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-4">

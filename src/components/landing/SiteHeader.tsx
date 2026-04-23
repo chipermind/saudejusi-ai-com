@@ -12,16 +12,16 @@ export function SiteHeader() {
         </Link>
         <nav className="hidden items-center gap-8 md:flex">
           <a
-            href="/#produto"
+            href="/#como-funciona"
             className="text-sm text-text-secondary transition-colors hover:text-text-primary"
           >
-            Produto
+            Como funciona
           </a>
           <a
-            href="/#jurimetria"
+            href="/#direitos"
             className="text-sm text-text-secondary transition-colors hover:text-text-primary"
           >
-            Jurimetria
+            Direitos
           </a>
           <a
             href="/#precos"
@@ -30,18 +30,13 @@ export function SiteHeader() {
             Preços
           </a>
           <a
-            href="/#sobre"
+            href="/#faq"
             className="text-sm text-text-secondary transition-colors hover:text-text-primary"
           >
-            Sobre
+            FAQ
           </a>
         </nav>
         <div className="flex items-center gap-2">
-          <Link to="/login">
-            <Button variant="ghost" size="sm">
-              Entrar
-            </Button>
-          </Link>
           <Link
             to="/waitlist"
             onClick={() => trackEvent("CTA Click", { location: "header" })}

@@ -5,8 +5,8 @@ import { SiteFooter } from "@/components/landing/SiteFooter";
 export const Route = createFileRoute("/lgpd")({
   head: () => ({
     meta: [
-      { title: "LGPD — Defere" },
-      { name: "description", content: "Conformidade LGPD da plataforma Defere." },
+      { title: "LGPD — SaudeJusia" },
+      { name: "description", content: "Conformidade LGPD da plataforma SaudeJusia." },
     ],
   }),
   component: LgpdPage,
@@ -25,10 +25,10 @@ function LgpdPage() {
           Documento em elaboração. Última atualização: abril/2026. Para dúvidas,
           escreva para{" "}
           <a
-            href="mailto:contato@defere.com.br"
+            href="mailto:privacidade@saudejusia.com.br"
             className="text-primary hover:text-primary/80"
           >
-            contato@defere.com.br
+            privacidade@saudejusia.com.br
           </a>
           .
         </p>
