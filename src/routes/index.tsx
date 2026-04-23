@@ -83,7 +83,10 @@ function Hero() {
             intermediamos contratação de advocacia.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-3">
-            <Link to="/signup">
+            <Link
+              to="/waitlist"
+              onClick={() => trackEvent("CTA Click", { location: "hero" })}
+            >
               <Button size="lg" className="h-11 px-6">
                 Entrar na waitlist <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
@@ -257,7 +260,8 @@ type Plan = {
   desc: string;
   features: string[];
   highlighted: boolean;
-  cta: { label: string; to?: "/signup"; href?: string };
+  ctaLocation: CtaLocation;
+  cta: { label: string; to?: "/waitlist"; href?: string };
 };
 
 function Pricing() {
@@ -276,7 +280,8 @@ function Pricing() {
         "Suporte por email",
       ],
       highlighted: false,
-      cta: { label: "Entrar na waitlist", to: "/signup" },
+      ctaLocation: "pricing_solo",
+      cta: { label: "Entrar na waitlist", to: "/waitlist" },
     },
     {
       name: "Dupla",
@@ -290,7 +295,8 @@ function Pricing() {
         "Suporte por email prioritário",
       ],
       highlighted: true,
-      cta: { label: "Entrar na waitlist", to: "/signup" },
+      ctaLocation: "pricing_dupla",
+      cta: { label: "Entrar na waitlist", to: "/waitlist" },
     },
     {
       name: "Escritório",
@@ -305,7 +311,8 @@ function Pricing() {
         "Suporte prioritário",
       ],
       highlighted: false,
-      cta: { label: "Entrar na waitlist", to: "/signup" },
+      ctaLocation: "pricing_escritorio",
+      cta: { label: "Entrar na waitlist", to: "/waitlist" },
     },
     {
       name: "Enterprise",
@@ -321,6 +328,7 @@ function Pricing() {
         "SLA dedicado",
       ],
       highlighted: false,
+      ctaLocation: "pricing_enterprise",
       cta: {
         label: "Falar com vendas",
         href:
