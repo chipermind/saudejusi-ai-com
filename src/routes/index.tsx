@@ -14,6 +14,7 @@ import { HeroCaseCard } from "@/components/landing/HeroCaseCard";
 import { JurimetriaChart } from "@/components/landing/JurimetriaChart";
 import { Testimonials } from "@/components/landing/Testimonials";
 import { SobreSection } from "@/components/landing/SobreSection";
+import { trackEvent, type CtaLocation } from "@/lib/plausible";
 
 export const Route = createFileRoute("/")({
   head: () => ({

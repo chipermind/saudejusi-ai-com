@@ -3,6 +3,9 @@ import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
 
+// NOTE: Update `data-domain` when migrating to the production domain (defere.com.br).
+const PLAUSIBLE_DOMAIN = "defere-ia-com.lovable.app";
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -58,6 +61,19 @@ export const Route = createRootRoute({
       {
         rel: "stylesheet",
         href: appCss,
+      },
+    ],
+    scripts: [
+      // Plausible — cookieless, LGPD-compliant. Tagged-events build supports custom events.
+      {
+        defer: true,
+        "data-domain": PLAUSIBLE_DOMAIN,
+        src: "https://plausible.io/js/script.tagged-events.js",
+      },
+      // Bridge so window.plausible() is callable before the async script loads.
+      {
+        children:
+          "window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}",
       },
     ],
   }),

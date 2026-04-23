@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WaitlistRouteImport } from './routes/waitlist'
 import { Route as TermosRouteImport } from './routes/termos'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as LoginRouteImport } from './routes/login'
@@ -36,6 +37,11 @@ const WaitlistRoute = WaitlistRouteImport.update({
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
   path: '/termos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
+  '/signup': typeof SignupRoute
   '/termos': typeof TermosRoute
   '/waitlist': typeof WaitlistRoute
   '/app/': typeof AppIndexRoute
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
+  '/signup': typeof SignupRoute
   '/termos': typeof TermosRoute
   '/waitlist': typeof WaitlistRoute
   '/app': typeof AppIndexRoute
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
+  '/signup': typeof SignupRoute
   '/termos': typeof TermosRoute
   '/waitlist': typeof WaitlistRoute
   '/app/': typeof AppIndexRoute
@@ -192,6 +201,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/redefinir-senha'
+    | '/signup'
     | '/termos'
     | '/waitlist'
     | '/app/'
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/redefinir-senha'
+    | '/signup'
     | '/termos'
     | '/waitlist'
     | '/app'
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/redefinir-senha'
+    | '/signup'
     | '/termos'
     | '/waitlist'
     | '/app/'
@@ -252,6 +264,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
+  SignupRoute: typeof SignupRoute
   TermosRoute: typeof TermosRoute
   WaitlistRoute: typeof WaitlistRoute
   ApiIaClassifyDenialRoute: typeof ApiIaClassifyDenialRoute
@@ -274,6 +287,13 @@ declare module '@tanstack/react-router' {
       path: '/termos'
       fullPath: '/termos'
       preLoaderRoute: typeof TermosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/redefinir-senha': {
@@ -416,6 +436,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,
+  SignupRoute: SignupRoute,
   TermosRoute: TermosRoute,
   WaitlistRoute: WaitlistRoute,
   ApiIaClassifyDenialRoute: ApiIaClassifyDenialRoute,
