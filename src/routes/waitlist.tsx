@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
+import { trackEvent } from "@/lib/plausible";
 
 const UF = [
   "AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB",
@@ -48,12 +49,20 @@ function WaitlistPage() {
   const [oabState, setOabState] = useState("");
   const [firmSize, setFirmSize] = useState("");
   const [monthlyVolume, setMonthlyVolume] = useState("");
+  // Honeypot field — must remain empty for legitimate users.
+  const [website, setWebsite] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+
+    // Honeypot trip: pretend success, never call the API. Don't tip off the bot.
+    if (website.trim().length > 0) {
+      setSubmitted(true);
+      return;
+    }
 
     if (!accepted) {
       toast.error("Você precisa aceitar os termos.");
@@ -70,17 +79,35 @@ function WaitlistPage() {
 
     setLoading(true);
 
+    const userAgent =
+      typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : null;
+
     const { error } = await supabase.from("waitlist").insert({
       email: email.trim(),
       oab_number: oabNumber.trim(),
       oab_state: oabState,
       firm_size: firmSize,
       monthly_case_volume: monthlyVolume.trim() || null,
+      user_agent: userAgent,
     });
 
     setLoading(false);
 
     if (error) {
+      // Postgres unique violation = email already on the list. Silent success
+      // to avoid leaking whether an email exists (privacy + spam mitigation).
+      const code = (error as { code?: string }).code;
+      const isDuplicate =
+        code === "23505" || error.message.toLowerCase().includes("duplicate");
+
+      // Honeypot trigger raises a generic 'rejected' exception; treat as silent success.
+      const isHoneypotRejected = error.message.toLowerCase().includes("rejected");
+
+      if (isDuplicate || isHoneypotRejected) {
+        setSubmitted(true);
+        return;
+      }
+
       toast.error(
         error.message.includes("violates")
           ? "Verifique os dados informados e tente novamente."
@@ -88,6 +115,11 @@ function WaitlistPage() {
       );
       return;
     }
+
+    trackEvent("Waitlist Submit", {
+      firm_size: firmSize,
+      has_volume: String(monthlyVolume.trim().length > 0),
+    });
 
     setSubmitted(true);
   }
@@ -196,6 +228,35 @@ function WaitlistPage() {
                     value={monthlyVolume}
                     onChange={(e) => setMonthlyVolume(e.target.value)}
                     maxLength={50}
+                  />
+                </div>
+
+                {/*
+                  Honeypot field. Visible to bots that parse the DOM, hidden from
+                  humans via off-screen positioning (NOT display:none — bots skip those).
+                */}
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: "absolute",
+                    left: "-9999px",
+                    top: "auto",
+                    width: "1px",
+                    height: "1px",
+                    overflow: "hidden",
+                    opacity: 0,
+                    pointerEvents: "none",
+                  }}
+                >
+                  <label htmlFor="website">Website</label>
+                  <input
+                    type="text"
+                    id="website"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={website}
+                    onChange={(e) => setWebsite(e.target.value)}
                   />
                 </div>
 
