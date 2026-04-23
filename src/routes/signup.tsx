@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/Logo";
@@ -14,35 +14,47 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { CheckCircle2 } from "lucide-react";
 
 const UF = [
   "AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB",
   "PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO",
 ];
 
+const FIRM_SIZE_OPTIONS: { value: string; label: string }[] = [
+  { value: "solo", label: "Solo" },
+  { value: "2-3", label: "2-3 advogados" },
+  { value: "4-10", label: "4-10 advogados" },
+  { value: "11+", label: "11+" },
+];
+
 export const Route = createFileRoute("/signup")({
   head: () => ({
     meta: [
-      { title: "Criar conta — Defere" },
-      { name: "description", content: "Comece seu teste gratuito de 14 dias." },
+      { title: "Entrar na waitlist — Defere" },
+      {
+        name: "description",
+        content:
+          "Solicite convite para o beta fechado do Defere — IA jurídica para escritórios de direito médico.",
+      },
     ],
   }),
-  component: SignupPage,
+  component: WaitlistPage,
 });
 
-function SignupPage() {
-  const navigate = useNavigate();
-  const [fullName, setFullName] = useState("");
+function WaitlistPage() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [oabNumber, setOabNumber] = useState("");
   const [oabState, setOabState] = useState("");
-  const [firmName, setFirmName] = useState("");
+  const [firmSize, setFirmSize] = useState("");
+  const [monthlyVolume, setMonthlyVolume] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+
     if (!accepted) {
       toast.error("Você precisa aceitar os termos.");
       return;
@@ -51,120 +63,178 @@ function SignupPage() {
       toast.error("Selecione o estado da OAB.");
       return;
     }
-    setLoading(true);
-
-    const { error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/app`,
-        data: { full_name: fullName },
-      },
-    });
-
-    if (signUpError) {
-      setLoading(false);
-      toast.error(signUpError.message);
+    if (!firmSize) {
+      toast.error("Selecione o porte do escritório.");
       return;
     }
 
-    // Ensure session exists (depends on email confirmation setting)
-    const { data: sessionData } = await supabase.auth.getSession();
-    if (!sessionData.session) {
-      // Fallback: try sign in
-      await supabase.auth.signInWithPassword({ email, password });
-    }
+    setLoading(true);
 
-    const { error: rpcError } = await supabase.rpc("signup_create_firm", {
-      _firm_name: firmName,
-      _full_name: fullName,
-      _oab_number: oabNumber,
-      _oab_state: oabState,
+    const { error } = await supabase.from("waitlist").insert({
+      email: email.trim(),
+      oab_number: oabNumber.trim(),
+      oab_state: oabState,
+      firm_size: firmSize,
+      monthly_case_volume: monthlyVolume.trim() || null,
     });
 
     setLoading(false);
 
-    if (rpcError) {
-      toast.error(`Conta criada, mas falhou ao criar escritório: ${rpcError.message}`);
+    if (error) {
+      toast.error(
+        error.message.includes("violates")
+          ? "Verifique os dados informados e tente novamente."
+          : "Não foi possível enviar agora. Tente novamente em instantes.",
+      );
       return;
     }
 
-    toast.success("Bem-vindo ao Defere.");
-    navigate({ to: "/app" });
+    setSubmitted(true);
   }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-6 py-12">
-      <div className="w-full max-w-[440px]">
+      <div className="w-full max-w-[460px]">
         <Link to="/" className="mb-10 flex justify-center">
           <Logo size="lg" />
         </Link>
 
         <div className="rounded-xl border border-border bg-surface p-8">
-          <h1 className="text-xl font-semibold text-text-primary">Criar conta</h1>
-          <p className="mt-1 text-sm text-text-tertiary">14 dias grátis. Sem cartão.</p>
-
-          <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="full_name">Nome completo</Label>
-              <Input id="full_name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email profissional</Label>
-              <Input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input id="password" type="password" autoComplete="new-password" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} required />
-            </div>
-
-            <div className="grid grid-cols-[1fr_120px] gap-3">
-              <div className="space-y-2">
-                <Label htmlFor="oab">Número da OAB</Label>
-                <Input id="oab" value={oabNumber} onChange={(e) => setOabNumber(e.target.value)} required />
+          {submitted ? (
+            <div className="text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success/10">
+                <CheckCircle2 className="h-6 w-6 text-success" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="oab_state">UF</Label>
-                <Select value={oabState} onValueChange={setOabState}>
-                  <SelectTrigger id="oab_state"><SelectValue placeholder="UF" /></SelectTrigger>
-                  <SelectContent>
-                    {UF.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+              <h1 className="mt-6 text-xl font-semibold text-text-primary">
+                Pedido recebido
+              </h1>
+              <p className="mt-3 text-sm leading-relaxed text-text-secondary">
+                Recebemos seu pedido. Convites são enviados por ordem de chegada e
+                perfil de escritório. Acompanhe o e-mail informado.
+              </p>
+              <div className="mt-8">
+                <Link to="/">
+                  <Button variant="secondary" className="w-full">
+                    Voltar para a home
+                  </Button>
+                </Link>
               </div>
             </div>
+          ) : (
+            <>
+              <h1 className="text-xl font-semibold text-text-primary">
+                Entrar na waitlist
+              </h1>
+              <p className="mt-1 text-sm text-text-tertiary">
+                Beta fechado em andamento. Acesso por convite.
+              </p>
 
-            <div className="space-y-2">
-              <Label htmlFor="firm">Nome do escritório</Label>
-              <Input id="firm" value={firmName} onChange={(e) => setFirmName(e.target.value)} required />
-            </div>
+              <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email profissional</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
 
-            <label className="flex items-start gap-3 pt-2 text-sm text-text-secondary">
-              <Checkbox
-                checked={accepted}
-                onCheckedChange={(v) => setAccepted(v === true)}
-                className="mt-0.5"
-                aria-label="Aceitar termos"
-              />
-              <span>
-                Li e aceito os{" "}
-                <a href="#" className="text-primary hover:text-primary-hover">termos</a>{" "}
-                e a{" "}
-                <a href="#" className="text-primary hover:text-primary-hover">política de privacidade</a>.
-              </span>
-            </label>
+                <div className="grid grid-cols-[1fr_120px] gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="oab">Número da OAB</Label>
+                    <Input
+                      id="oab"
+                      value={oabNumber}
+                      onChange={(e) => setOabNumber(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="oab_state">UF</Label>
+                    <Select value={oabState} onValueChange={setOabState}>
+                      <SelectTrigger id="oab_state">
+                        <SelectValue placeholder="UF" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {UF.map((s) => (
+                          <SelectItem key={s} value={s}>
+                            {s}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Criando..." : "Criar conta"}
-            </Button>
-          </form>
+                <div className="space-y-2">
+                  <Label htmlFor="firm_size">Porte do escritório</Label>
+                  <Select value={firmSize} onValueChange={setFirmSize}>
+                    <SelectTrigger id="firm_size">
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FIRM_SIZE_OPTIONS.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-          <p className="mt-6 text-center text-sm text-text-secondary">
-            Já tem conta?{" "}
-            <Link to="/login" className="text-primary hover:text-primary-hover">Entrar →</Link>
-          </p>
+                <div className="space-y-2">
+                  <Label htmlFor="volume">
+                    Volume mensal estimado de casos de direito médico{" "}
+                    <span className="text-text-tertiary">(opcional)</span>
+                  </Label>
+                  <Input
+                    id="volume"
+                    placeholder="Ex.: 5 a 10 casos/mês"
+                    value={monthlyVolume}
+                    onChange={(e) => setMonthlyVolume(e.target.value)}
+                    maxLength={50}
+                  />
+                </div>
+
+                <label className="flex items-start gap-3 pt-2 text-sm text-text-secondary">
+                  <Checkbox
+                    checked={accepted}
+                    onCheckedChange={(v) => setAccepted(v === true)}
+                    className="mt-0.5"
+                    aria-label="Aceitar termos"
+                  />
+                  <span>
+                    Concordo com os{" "}
+                    <Link to="/termos" className="text-primary hover:text-primary/80">
+                      Termos
+                    </Link>{" "}
+                    e com a{" "}
+                    <Link
+                      to="/privacidade"
+                      className="text-primary hover:text-primary/80"
+                    >
+                      Política de Privacidade
+                    </Link>
+                    .
+                  </span>
+                </label>
+
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? "Enviando..." : "Solicitar convite"}
+                </Button>
+              </form>
+
+              <p className="mt-6 text-center text-sm text-text-secondary">
+                Já tem conta?{" "}
+                <Link to="/login" className="text-primary hover:text-primary/80">
+                  Entrar →
+                </Link>
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>

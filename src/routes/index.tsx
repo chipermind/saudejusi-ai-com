@@ -12,6 +12,8 @@ import { SiteHeader } from "@/components/landing/SiteHeader";
 import { SiteFooter } from "@/components/landing/SiteFooter";
 import { HeroCaseCard } from "@/components/landing/HeroCaseCard";
 import { JurimetriaChart } from "@/components/landing/JurimetriaChart";
+import { Testimonials } from "@/components/landing/Testimonials";
+import { SobreSection } from "@/components/landing/SobreSection";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -44,9 +46,11 @@ function LandingPage() {
       <Hero />
       <Problem />
       <HowItWorks />
+      <Testimonials />
       <Jurimetria />
       <Pricing />
       <Faq />
+      <SobreSection />
       <SiteFooter />
     </div>
   );
@@ -73,10 +77,14 @@ function Hero() {
             gera o parecer, o recurso à ANS e a petição inicial com tutela de urgência. Para
             escritórios que atuam com direito médico.
           </p>
+          <p className="mt-4 max-w-xl text-xs leading-relaxed text-text-tertiary">
+            Plataforma exclusiva para advogados. Não prestamos serviços jurídicos nem
+            intermediamos contratação de advocacia.
+          </p>
           <div className="mt-10 flex flex-wrap items-center gap-3">
-            <Link to="/demo">
+            <Link to="/signup">
               <Button size="lg" className="h-11 px-6">
-                Solicitar demo <ArrowRight className="ml-1 h-4 w-4" />
+                Entrar na waitlist <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
             </Link>
             <a href="#produto">
@@ -102,16 +110,19 @@ function Hero() {
 function Problem() {
   const stats = [
     {
-      value: "8 em 10",
-      label: "negativas de plano têm reversão possível no Judiciário",
+      value: "Maioria",
+      label: "das negativas de plano de saúde é revertida no Judiciário",
+      source: "IESS, 2023",
     },
     {
       value: "R$ 4.2 bi",
-      label: "em demandas contra operadoras em 2024 (ANS)",
+      label: "em demandas contra operadoras em 2024",
+      source: "ANS, 2024",
     },
     {
       value: "47 dias",
       label: "tempo médio que um advogado gasta montando um caso do zero",
+      source: null,
     },
   ];
   return (
@@ -128,11 +139,14 @@ function Problem() {
 
         <div className="mt-16 grid gap-12 md:grid-cols-3">
           {stats.map((s) => (
-            <div key={s.value} className="border-l-2 border-primary pl-6">
+            <div key={s.label} className="border-l-2 border-primary pl-6">
               <p className="font-mono text-5xl font-semibold tracking-tight text-text-primary">
                 {s.value}
               </p>
               <p className="mt-3 text-sm leading-relaxed text-text-secondary">{s.label}</p>
+              {s.source && (
+                <p className="mt-2 text-xs text-text-tertiary">Fonte: {s.source}</p>
+              )}
             </div>
           ))}
         </div>
@@ -160,7 +174,7 @@ function HowItWorks() {
       n: "03",
       icon: BarChart3,
       title: "Previsão",
-      desc: "Você recebe a probabilidade de êxito, tempo médio e dano moral esperado na sua comarca.",
+      desc: "Você recebe indicadores estatísticos de procedência, tempo médio e faixa de dano moral observada na sua comarca.",
     },
     {
       n: "04",
@@ -211,9 +225,9 @@ function Jurimetria() {
             <span className="text-text-tertiary">dados, não em achismo.</span>
           </h2>
           <p className="mt-6 max-w-lg text-base leading-relaxed text-text-secondary">
-            Cruzamos tipo de negativa, operadora, comarca e juízo para entregar a probabilidade
-            de procedência e o valor esperado de condenação por dano moral — atualizado a cada
-            nova decisão publicada.
+            Cruzamos tipo de negativa, operadora, comarca e juízo para entregar
+            indicadores estatísticos de procedência e faixas históricas de condenação
+            por dano moral — atualizado a cada nova decisão publicada.
           </p>
           <ul className="mt-8 space-y-3 text-sm text-text-secondary">
             {[
@@ -257,10 +271,25 @@ function Pricing() {
         "Wizard completo de análise",
         "Geração de parecer, recurso ANS, notificação e petição",
         "Jurimetria baseline",
+        "Exportação .docx/.pdf (sem integração PJe)",
         "Suporte por email",
       ],
       highlighted: false,
-      cta: { label: "Começar 14 dias grátis", to: "/signup" },
+      cta: { label: "Entrar na waitlist", to: "/signup" },
+    },
+    {
+      name: "Dupla",
+      price: "R$ 897",
+      desc: "Para bancas enxutas de 2 a 3 advogados.",
+      features: [
+        "Até 3 advogados",
+        "60 casos por mês",
+        "Todas as features core",
+        "Integração PJe incluída",
+        "Suporte por email prioritário",
+      ],
+      highlighted: true,
+      cta: { label: "Entrar na waitlist", to: "/signup" },
     },
     {
       name: "Escritório",
@@ -269,13 +298,13 @@ function Pricing() {
       features: [
         "Até 5 advogados",
         "Casos ilimitados",
-        "Tudo do plano Solo",
-        "Jurimetria avançada por tribunal e operadora",
+        "Tudo do plano Dupla",
+        "Integração PJe + jurimetria avançada por tribunal e operadora",
         "Biblioteca de minutas editáveis",
         "Suporte prioritário",
       ],
-      highlighted: true,
-      cta: { label: "Começar 14 dias grátis", to: "/signup" },
+      highlighted: false,
+      cta: { label: "Entrar na waitlist", to: "/signup" },
     },
     {
       name: "Enterprise",
@@ -287,7 +316,7 @@ function Pricing() {
         "Jurimetria proprietária do escritório",
         "API de integração",
         "White-label",
-        "Integração PJe (2º semestre 2026)",
+        "Integração PJe customizada",
         "SLA dedicado",
       ],
       highlighted: false,
@@ -310,7 +339,19 @@ function Pricing() {
           <p className="mt-4 text-base text-text-secondary">14 dias grátis, sem cartão.</p>
         </div>
 
-        <div className="mt-16 grid gap-6 md:grid-cols-3">
+        {/* ROI block */}
+        <div className="mt-10 rounded-xl border border-border bg-surface p-6">
+          <p className="text-sm leading-relaxed text-text-secondary">
+            Um caso de OPME revertido gera em média{" "}
+            <span className="font-medium text-text-primary">
+              R$ 30–80 mil em honorários contratuais
+            </span>
+            . Se o Defere ajudar você a ganhar 1 caso adicional por mês, a assinatura
+            Solo se paga em 60x.
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {plans.map((p) => (
             <Card
               key={p.name}
@@ -369,14 +410,6 @@ function Pricing() {
             </Card>
           ))}
         </div>
-
-        <p
-          className="mx-auto mt-12 max-w-[600px] text-center leading-relaxed text-text-secondary"
-          style={{ fontSize: "15px" }}
-        >
-          Um único caso ganho com honorários médios de R$ 3.000 cobre mais de uma anuidade do
-          plano Escritório. A maioria dos escritórios recupera o investimento no primeiro mês.
-        </p>
       </div>
     </section>
   );
@@ -387,23 +420,27 @@ function Faq() {
   const items = [
     {
       q: "A IA substitui o advogado?",
-      a: "Não. O Defere é ferramenta de apoio à atividade advocatícia. Toda peça gerada é minuta e precisa de revisão técnica, ajuste ao caso concreto e assinatura de advogado habilitado. A plataforma automatiza o trabalho operacional — leitura de documentos, classificação da negativa, pesquisa de precedentes, montagem da estrutura da petição — para que você foque na estratégia e na revisão crítica.",
+      a: "Não. O Defere é uma ferramenta de apoio à atividade advocatícia. Todas as peças geradas — pareceres, recursos à ANS, notificações e petições iniciais — são rascunhos que exigem revisão e assinatura de advogado habilitado. Nosso papel é eliminar as 40 horas de pesquisa e redação inicial, não a responsabilidade técnica do profissional.",
     },
     {
       q: "Como vocês garantem LGPD com dados de saúde?",
-      a: "Dados de saúde são classificados como sensíveis pela LGPD (art. 11). Operamos com base legal de tutela da saúde combinada com consentimento do titular, criptografia em repouso e em trânsito, isolamento por escritório via Row Level Security, logs de auditoria de todos os acessos e retenção limitada ao período necessário. Assinamos DPA com todos os subprocessadores. DPO designado.",
+      a: "Dados de saúde são pessoais sensíveis (art. 11, LGPD). Tratamos com: (i) criptografia em repouso (AES-256) e em trânsito (TLS 1.3); (ii) segregação lógica por escritório (tenant isolation); (iii) retenção configurável pelo escritório, com expurgo padrão em 5 anos após encerramento do caso; (iv) DPO nomeado e canal dedicado em privacidade@defere.com.br; (v) contrato de operador LGPD firmado com cada escritório cliente, posicionando o escritório como controlador e o Defere como operador. Relatório de Impacto (RIPD) disponível sob NDA para escritórios em avaliação.",
     },
     {
       q: "De onde vem a base de jurisprudência?",
-      a: "A versão atual opera com baseline estatístico construído a partir de fontes públicas agregadas (Justiça em Números do CNJ, relatórios setoriais da ANS e pesquisa jurisprudencial em portais oficiais dos tribunais). Conforme escritórios utilizam a plataforma, dados anonimizados dos casos realimentam o modelo, evoluindo para jurimetria proprietária. Transparência total sobre a versão do modelo em uso.",
+      a: "Usamos coleta pública de decisões a partir de DJEs estaduais, do DataJud/CNJ e dos portais de tribunais, com filtros para excluir processos sob segredo de justiça e mascarar dados pessoais de terceiros antes do ingest. A base é recortada para direito médico e atualizada diariamente.",
     },
     {
       q: "Posso integrar com o PJe?",
-      a: "Não na versão atual. Integração com PJe e outros sistemas de tribunal está no roadmap do plano Enterprise para o segundo semestre de 2026. Hoje, as peças são exportadas em .docx editável, prontas para protocolo manual ou para importação em qualquer ferramenta de peticionamento eletrônico.",
+      a: "Sim. A integração com PJe (peticionamento eletrônico via certificado A3/A1 do advogado) está disponível a partir do plano Dupla. No plano Solo, você exporta a peça em .docx/.pdf pronta para protocolo manual.",
     },
     {
       q: "O escritório vira cliente exclusivo de vocês?",
-      a: "Não. Você não precisa mudar seu software de gestão, seu CRM ou seu fluxo atual. O Defere é uma camada especializada em direito médico que se soma ao seu stack — não substitui Projuris, Astrea, Legal One ou qualquer outro sistema de gestão.",
+      a: "Não há exclusividade. Você pode usar o Defere em paralelo a outras ferramentas e cancelar a qualquer momento com efeito no fim do ciclo corrente de cobrança.",
+    },
+    {
+      q: "Quando o beta abre?",
+      a: "O beta fechado está em operação com escritórios-piloto selecionados. A abertura pública está prevista para o segundo semestre de 2026. Entre na waitlist para receber convite prioritário.",
     },
   ];
   return (
