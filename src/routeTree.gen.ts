@@ -9,9 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermosRouteImport } from './routes/termos'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as LgpdRouteImport } from './routes/lgpd'
 import { Route as EsqueciSenhaRouteImport } from './routes/esqueci-senha'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as AppRouteImport } from './routes/app'
@@ -25,6 +28,11 @@ import { Route as ApiIaExtractDocumentRouteImport } from './routes/api.ia.extrac
 import { Route as ApiIaEstimateJurimetricsRouteImport } from './routes/api.ia.estimate-jurimetrics'
 import { Route as ApiIaClassifyDenialRouteImport } from './routes/api.ia.classify-denial'
 
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -35,9 +43,19 @@ const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
   path: '/redefinir-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LgpdRoute = LgpdRouteImport.update({
+  id: '/lgpd',
+  path: '/lgpd',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EsqueciSenhaRoute = EsqueciSenhaRouteImport.update({
@@ -108,9 +126,12 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/demo': typeof DemoRoute
   '/esqueci-senha': typeof EsqueciSenhaRoute
+  '/lgpd': typeof LgpdRoute
   '/login': typeof LoginRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/signup': typeof SignupRoute
+  '/termos': typeof TermosRoute
   '/app/': typeof AppIndexRoute
   '/api/ia/classify-denial': typeof ApiIaClassifyDenialRoute
   '/api/ia/estimate-jurimetrics': typeof ApiIaEstimateJurimetricsRoute
@@ -124,9 +145,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
   '/esqueci-senha': typeof EsqueciSenhaRoute
+  '/lgpd': typeof LgpdRoute
   '/login': typeof LoginRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/signup': typeof SignupRoute
+  '/termos': typeof TermosRoute
   '/app': typeof AppIndexRoute
   '/api/ia/classify-denial': typeof ApiIaClassifyDenialRoute
   '/api/ia/estimate-jurimetrics': typeof ApiIaEstimateJurimetricsRoute
@@ -142,9 +166,12 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/demo': typeof DemoRoute
   '/esqueci-senha': typeof EsqueciSenhaRoute
+  '/lgpd': typeof LgpdRoute
   '/login': typeof LoginRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/signup': typeof SignupRoute
+  '/termos': typeof TermosRoute
   '/app/': typeof AppIndexRoute
   '/api/ia/classify-denial': typeof ApiIaClassifyDenialRoute
   '/api/ia/estimate-jurimetrics': typeof ApiIaEstimateJurimetricsRoute
@@ -161,9 +188,12 @@ export interface FileRouteTypes {
     | '/app'
     | '/demo'
     | '/esqueci-senha'
+    | '/lgpd'
     | '/login'
+    | '/privacidade'
     | '/redefinir-senha'
     | '/signup'
+    | '/termos'
     | '/app/'
     | '/api/ia/classify-denial'
     | '/api/ia/estimate-jurimetrics'
@@ -177,9 +207,12 @@ export interface FileRouteTypes {
     | '/'
     | '/demo'
     | '/esqueci-senha'
+    | '/lgpd'
     | '/login'
+    | '/privacidade'
     | '/redefinir-senha'
     | '/signup'
+    | '/termos'
     | '/app'
     | '/api/ia/classify-denial'
     | '/api/ia/estimate-jurimetrics'
@@ -194,9 +227,12 @@ export interface FileRouteTypes {
     | '/app'
     | '/demo'
     | '/esqueci-senha'
+    | '/lgpd'
     | '/login'
+    | '/privacidade'
     | '/redefinir-senha'
     | '/signup'
+    | '/termos'
     | '/app/'
     | '/api/ia/classify-denial'
     | '/api/ia/estimate-jurimetrics'
@@ -212,9 +248,12 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   DemoRoute: typeof DemoRoute
   EsqueciSenhaRoute: typeof EsqueciSenhaRoute
+  LgpdRoute: typeof LgpdRoute
   LoginRoute: typeof LoginRoute
+  PrivacidadeRoute: typeof PrivacidadeRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
   SignupRoute: typeof SignupRoute
+  TermosRoute: typeof TermosRoute
   ApiIaClassifyDenialRoute: typeof ApiIaClassifyDenialRoute
   ApiIaEstimateJurimetricsRoute: typeof ApiIaEstimateJurimetricsRoute
   ApiIaExtractDocumentRoute: typeof ApiIaExtractDocumentRoute
@@ -223,6 +262,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -237,11 +283,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RedefinirSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lgpd': {
+      id: '/lgpd'
+      path: '/lgpd'
+      fullPath: '/lgpd'
+      preLoaderRoute: typeof LgpdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/esqueci-senha': {
@@ -352,9 +412,12 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   DemoRoute: DemoRoute,
   EsqueciSenhaRoute: EsqueciSenhaRoute,
+  LgpdRoute: LgpdRoute,
   LoginRoute: LoginRoute,
+  PrivacidadeRoute: PrivacidadeRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,
   SignupRoute: SignupRoute,
+  TermosRoute: TermosRoute,
   ApiIaClassifyDenialRoute: ApiIaClassifyDenialRoute,
   ApiIaEstimateJurimetricsRoute: ApiIaEstimateJurimetricsRoute,
   ApiIaExtractDocumentRoute: ApiIaExtractDocumentRoute,

@@ -26,7 +26,11 @@ export function HeroCaseCard() {
         <div className="mt-6 border-t border-border pt-4">
           <p className="caption mb-3">Análise do Defere</p>
           <div className="space-y-3">
-            <Metric label="Probabilidade de êxito" value="87%" tone="success" />
+            <Metric
+              label="Indicador estatístico de procedência"
+              value="87%"
+              tone="success"
+            />
             <Metric label="Dano moral estimado" value="R$ 12.400" />
             <Metric label="Tempo médio" value="6 meses" />
           </div>
@@ -39,6 +43,11 @@ export function HeroCaseCard() {
           </p>
         </div>
       </div>
+
+      <p className="mt-3 text-center text-[11px] leading-relaxed text-text-tertiary">
+        Indicadores são baseados em decisões históricas e não constituem garantia de
+        resultado.
+      </p>
     </div>
   );
 }
@@ -62,7 +71,7 @@ function Metric({
   tone?: "success";
 }) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between gap-3">
       <span className="text-sm text-text-secondary">{label}</span>
       <span
         className={`font-mono text-base font-semibold ${

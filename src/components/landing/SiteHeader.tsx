@@ -11,22 +11,28 @@ export function SiteHeader() {
         </Link>
         <nav className="hidden items-center gap-8 md:flex">
           <a
-            href="#produto"
+            href="/#produto"
             className="text-sm text-text-secondary transition-colors hover:text-text-primary"
           >
             Produto
           </a>
           <a
-            href="#jurimetria"
+            href="/#jurimetria"
             className="text-sm text-text-secondary transition-colors hover:text-text-primary"
           >
             Jurimetria
           </a>
           <a
-            href="#precos"
+            href="/#precos"
             className="text-sm text-text-secondary transition-colors hover:text-text-primary"
           >
             Preços
+          </a>
+          <a
+            href="/#sobre"
+            className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+          >
+            Sobre
           </a>
         </nav>
         <div className="flex items-center gap-2">
@@ -35,8 +41,8 @@ export function SiteHeader() {
               Entrar
             </Button>
           </Link>
-          <Link to="/demo">
-            <Button size="sm">Solicitar demo</Button>
+          <Link to="/signup">
+            <Button size="sm">Entrar na waitlist</Button>
           </Link>
         </div>
       </div>
