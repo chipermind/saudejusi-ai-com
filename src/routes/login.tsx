@@ -121,8 +121,8 @@ function LoginPage() {
 
           <p className="mt-8 text-center text-sm text-text-secondary">
             Não tem conta?{" "}
-            <Link to="/signup" className="text-primary hover:text-primary-hover">
-              Criar conta →
+            <Link to="/waitlist" className="text-primary hover:text-primary-hover">
+              Entrar na waitlist →
             </Link>
           </p>
         </div>

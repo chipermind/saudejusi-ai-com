@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/plausible";
 
 export function SiteHeader() {
   return (
@@ -41,7 +42,10 @@ export function SiteHeader() {
               Entrar
             </Button>
           </Link>
-          <Link to="/signup">
+          <Link
+            to="/waitlist"
+            onClick={() => trackEvent("CTA Click", { location: "header" })}
+          >
             <Button size="sm">Entrar na waitlist</Button>
           </Link>
         </div>

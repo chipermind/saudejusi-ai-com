@@ -386,31 +386,37 @@ export type Database = {
           created_at: string
           email: string
           firm_size: string
+          honeypot: string | null
           id: string
           monthly_case_volume: string | null
           notes: string | null
           oab_number: string
           oab_state: string
+          user_agent: string | null
         }
         Insert: {
           created_at?: string
           email: string
           firm_size: string
+          honeypot?: string | null
           id?: string
           monthly_case_volume?: string | null
           notes?: string | null
           oab_number: string
           oab_state: string
+          user_agent?: string | null
         }
         Update: {
           created_at?: string
           email?: string
           firm_size?: string
+          honeypot?: string | null
           id?: string
           monthly_case_volume?: string | null
           notes?: string | null
           oab_number?: string
           oab_state?: string
+          user_agent?: string | null
         }
         Relationships: []
       }

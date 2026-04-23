@@ -14,6 +14,7 @@ import { HeroCaseCard } from "@/components/landing/HeroCaseCard";
 import { JurimetriaChart } from "@/components/landing/JurimetriaChart";
 import { Testimonials } from "@/components/landing/Testimonials";
 import { SobreSection } from "@/components/landing/SobreSection";
+import { trackEvent, type CtaLocation } from "@/lib/plausible";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -82,7 +83,10 @@ function Hero() {
             intermediamos contratação de advocacia.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-3">
-            <Link to="/signup">
+            <Link
+              to="/waitlist"
+              onClick={() => trackEvent("CTA Click", { location: "hero" })}
+            >
               <Button size="lg" className="h-11 px-6">
                 Entrar na waitlist <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
@@ -256,7 +260,8 @@ type Plan = {
   desc: string;
   features: string[];
   highlighted: boolean;
-  cta: { label: string; to?: "/signup"; href?: string };
+  ctaLocation: CtaLocation;
+  cta: { label: string; to?: "/waitlist"; href?: string };
 };
 
 function Pricing() {
@@ -275,7 +280,8 @@ function Pricing() {
         "Suporte por email",
       ],
       highlighted: false,
-      cta: { label: "Entrar na waitlist", to: "/signup" },
+      ctaLocation: "pricing_solo",
+      cta: { label: "Entrar na waitlist", to: "/waitlist" },
     },
     {
       name: "Dupla",
@@ -289,7 +295,8 @@ function Pricing() {
         "Suporte por email prioritário",
       ],
       highlighted: true,
-      cta: { label: "Entrar na waitlist", to: "/signup" },
+      ctaLocation: "pricing_dupla",
+      cta: { label: "Entrar na waitlist", to: "/waitlist" },
     },
     {
       name: "Escritório",
@@ -304,7 +311,8 @@ function Pricing() {
         "Suporte prioritário",
       ],
       highlighted: false,
-      cta: { label: "Entrar na waitlist", to: "/signup" },
+      ctaLocation: "pricing_escritorio",
+      cta: { label: "Entrar na waitlist", to: "/waitlist" },
     },
     {
       name: "Enterprise",
@@ -320,6 +328,7 @@ function Pricing() {
         "SLA dedicado",
       ],
       highlighted: false,
+      ctaLocation: "pricing_enterprise",
       cta: {
         label: "Falar com vendas",
         href:
@@ -397,7 +406,12 @@ function Pricing() {
                     </Button>
                   </a>
                 ) : (
-                  <Link to={p.cta.to ?? "/signup"}>
+                  <Link
+                    to={p.cta.to ?? "/waitlist"}
+                    onClick={() =>
+                      trackEvent("CTA Click", { location: p.ctaLocation })
+                    }
+                  >
                     <Button
                       className="w-full"
                       variant={p.highlighted ? "default" : "secondary"}
@@ -450,7 +464,17 @@ function Faq() {
         <h2 className="mt-4 text-4xl font-semibold tracking-tight text-text-primary">
           Dúvidas comuns.
         </h2>
-        <Accordion type="single" collapsible className="mt-12">
+        <Accordion
+          type="single"
+          collapsible
+          className="mt-12"
+          onValueChange={(value) => {
+            if (!value) return;
+            const idx = Number(value.replace("item-", ""));
+            const q = items[idx]?.q;
+            if (q) trackEvent("FAQ Open", { question: q.slice(0, 50) });
+          }}
+        >
           {items.map((it, i) => (
             <AccordionItem key={i} value={`item-${i}`} className="border-border">
               <AccordionTrigger className="text-left text-base font-medium text-text-primary hover:no-underline">
