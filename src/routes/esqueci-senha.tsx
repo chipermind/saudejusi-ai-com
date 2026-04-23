@@ -9,8 +9,8 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/esqueci-senha")({
   head: () => ({
     meta: [
-      { title: "Recuperar senha — Defere" },
-      { name: "description", content: "Recupere o acesso à sua conta no Defere." },
+      { title: "Recuperar senha — SaudeJusia" },
+      { name: "description", content: "Recupere o acesso à sua conta na SaudeJusia." },
     ],
   }),
   component: ForgotPasswordPage,
