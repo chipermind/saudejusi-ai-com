@@ -33,7 +33,7 @@ function LoginPage() {
       toast.error(error.message);
       return;
     }
-    navigate({ to: "/app" });
+    navigate({ to: "/minha-conta" });
   }
 
   async function handleMagic() {
@@ -44,7 +44,7 @@ function LoginPage() {
     setMagicLoading(true);
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${window.location.origin}/app` },
+      options: { emailRedirectTo: `${window.location.origin}/minha-conta` },
     });
     setMagicLoading(false);
     if (error) {
@@ -83,7 +83,7 @@ function LoginPage() {
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Senha</Label>
                 <Link
-                  to="/esqueci-senha"
+                  to="/recuperar-senha"
                   className="text-[13px] text-text-secondary no-underline hover:text-primary"
                 >
                   Esqueci minha senha
@@ -120,9 +120,9 @@ function LoginPage() {
           </Button>
 
           <p className="mt-8 text-center text-sm text-text-secondary">
-            Não tem conta?{" "}
-            <Link to="/waitlist" className="text-primary hover:text-primary-hover">
-              Entrar na waitlist →
+            Ainda não tem conta?{" "}
+            <Link to="/cadastro" className="text-primary hover:text-primary-hover">
+              Criar conta gratuita
             </Link>
           </p>
         </div>

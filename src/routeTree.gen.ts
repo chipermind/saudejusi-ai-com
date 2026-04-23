@@ -13,11 +13,15 @@ import { Route as WaitlistRouteImport } from './routes/waitlist'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
+import { Route as RecuperarSenhaRouteImport } from './routes/recuperar-senha'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as MinhaContaRouteImport } from './routes/minha-conta'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LgpdRouteImport } from './routes/lgpd'
 import { Route as EsqueciSenhaRouteImport } from './routes/esqueci-senha'
 import { Route as DemoRouteImport } from './routes/demo'
+import { Route as ConfirmarEmailRouteImport } from './routes/confirmar-email'
+import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
@@ -28,6 +32,12 @@ import { Route as ApiIaGenerateDeliverableRouteImport } from './routes/api.ia.ge
 import { Route as ApiIaExtractDocumentRouteImport } from './routes/api.ia.extract-document'
 import { Route as ApiIaEstimateJurimetricsRouteImport } from './routes/api.ia.estimate-jurimetrics'
 import { Route as ApiIaClassifyDenialRouteImport } from './routes/api.ia.classify-denial'
+import { Route as ApiPublicHooksExpurgarArtifactsRouteImport } from './routes/api.public.hooks.expurgar-artifacts'
+import { Route as ApiIaSaudejusiaGenerateRouteImport } from './routes/api.ia.saudejusia.generate'
+import { Route as ApiIaSaudejusiaExtractRouteImport } from './routes/api.ia.saudejusia.extract'
+import { Route as ApiIaSaudejusiaClassifyRouteImport } from './routes/api.ia.saudejusia.classify'
+import { Route as ApiIaSaudejusiaAnalyzeRouteImport } from './routes/api.ia.saudejusia.analyze'
+import { Route as ApiIaSaudejusiaArtifactIdRouteImport } from './routes/api.ia.saudejusia.artifact.$id'
 
 const WaitlistRoute = WaitlistRouteImport.update({
   id: '/waitlist',
@@ -49,9 +59,19 @@ const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
   path: '/redefinir-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RecuperarSenhaRoute = RecuperarSenhaRouteImport.update({
+  id: '/recuperar-senha',
+  path: '/recuperar-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
   id: '/privacidade',
   path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MinhaContaRoute = MinhaContaRouteImport.update({
+  id: '/minha-conta',
+  path: '/minha-conta',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -72,6 +92,16 @@ const EsqueciSenhaRoute = EsqueciSenhaRouteImport.update({
 const DemoRoute = DemoRouteImport.update({
   id: '/demo',
   path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfirmarEmailRoute = ConfirmarEmailRouteImport.update({
+  id: '/confirmar-email',
+  path: '/confirmar-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroRoute = CadastroRouteImport.update({
+  id: '/cadastro',
+  path: '/cadastro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -126,15 +156,51 @@ const ApiIaClassifyDenialRoute = ApiIaClassifyDenialRouteImport.update({
   path: '/api/ia/classify-denial',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksExpurgarArtifactsRoute =
+  ApiPublicHooksExpurgarArtifactsRouteImport.update({
+    id: '/api/public/hooks/expurgar-artifacts',
+    path: '/api/public/hooks/expurgar-artifacts',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiIaSaudejusiaGenerateRoute = ApiIaSaudejusiaGenerateRouteImport.update({
+  id: '/api/ia/saudejusia/generate',
+  path: '/api/ia/saudejusia/generate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiIaSaudejusiaExtractRoute = ApiIaSaudejusiaExtractRouteImport.update({
+  id: '/api/ia/saudejusia/extract',
+  path: '/api/ia/saudejusia/extract',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiIaSaudejusiaClassifyRoute = ApiIaSaudejusiaClassifyRouteImport.update({
+  id: '/api/ia/saudejusia/classify',
+  path: '/api/ia/saudejusia/classify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiIaSaudejusiaAnalyzeRoute = ApiIaSaudejusiaAnalyzeRouteImport.update({
+  id: '/api/ia/saudejusia/analyze',
+  path: '/api/ia/saudejusia/analyze',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiIaSaudejusiaArtifactIdRoute =
+  ApiIaSaudejusiaArtifactIdRouteImport.update({
+    id: '/api/ia/saudejusia/artifact/$id',
+    path: '/api/ia/saudejusia/artifact/$id',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/cadastro': typeof CadastroRoute
+  '/confirmar-email': typeof ConfirmarEmailRoute
   '/demo': typeof DemoRoute
   '/esqueci-senha': typeof EsqueciSenhaRoute
   '/lgpd': typeof LgpdRoute
   '/login': typeof LoginRoute
+  '/minha-conta': typeof MinhaContaRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/signup': typeof SignupRoute
   '/termos': typeof TermosRoute
@@ -147,14 +213,24 @@ export interface FileRoutesByFullPath {
   '/app/casos/$id': typeof AppCasosIdRoute
   '/app/casos/novo': typeof AppCasosNovoRoute
   '/app/casos/': typeof AppCasosIndexRoute
+  '/api/ia/saudejusia/analyze': typeof ApiIaSaudejusiaAnalyzeRoute
+  '/api/ia/saudejusia/classify': typeof ApiIaSaudejusiaClassifyRoute
+  '/api/ia/saudejusia/extract': typeof ApiIaSaudejusiaExtractRoute
+  '/api/ia/saudejusia/generate': typeof ApiIaSaudejusiaGenerateRoute
+  '/api/public/hooks/expurgar-artifacts': typeof ApiPublicHooksExpurgarArtifactsRoute
+  '/api/ia/saudejusia/artifact/$id': typeof ApiIaSaudejusiaArtifactIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cadastro': typeof CadastroRoute
+  '/confirmar-email': typeof ConfirmarEmailRoute
   '/demo': typeof DemoRoute
   '/esqueci-senha': typeof EsqueciSenhaRoute
   '/lgpd': typeof LgpdRoute
   '/login': typeof LoginRoute
+  '/minha-conta': typeof MinhaContaRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/signup': typeof SignupRoute
   '/termos': typeof TermosRoute
@@ -167,16 +243,26 @@ export interface FileRoutesByTo {
   '/app/casos/$id': typeof AppCasosIdRoute
   '/app/casos/novo': typeof AppCasosNovoRoute
   '/app/casos': typeof AppCasosIndexRoute
+  '/api/ia/saudejusia/analyze': typeof ApiIaSaudejusiaAnalyzeRoute
+  '/api/ia/saudejusia/classify': typeof ApiIaSaudejusiaClassifyRoute
+  '/api/ia/saudejusia/extract': typeof ApiIaSaudejusiaExtractRoute
+  '/api/ia/saudejusia/generate': typeof ApiIaSaudejusiaGenerateRoute
+  '/api/public/hooks/expurgar-artifacts': typeof ApiPublicHooksExpurgarArtifactsRoute
+  '/api/ia/saudejusia/artifact/$id': typeof ApiIaSaudejusiaArtifactIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/cadastro': typeof CadastroRoute
+  '/confirmar-email': typeof ConfirmarEmailRoute
   '/demo': typeof DemoRoute
   '/esqueci-senha': typeof EsqueciSenhaRoute
   '/lgpd': typeof LgpdRoute
   '/login': typeof LoginRoute
+  '/minha-conta': typeof MinhaContaRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/signup': typeof SignupRoute
   '/termos': typeof TermosRoute
@@ -189,17 +275,27 @@ export interface FileRoutesById {
   '/app/casos/$id': typeof AppCasosIdRoute
   '/app/casos/novo': typeof AppCasosNovoRoute
   '/app/casos/': typeof AppCasosIndexRoute
+  '/api/ia/saudejusia/analyze': typeof ApiIaSaudejusiaAnalyzeRoute
+  '/api/ia/saudejusia/classify': typeof ApiIaSaudejusiaClassifyRoute
+  '/api/ia/saudejusia/extract': typeof ApiIaSaudejusiaExtractRoute
+  '/api/ia/saudejusia/generate': typeof ApiIaSaudejusiaGenerateRoute
+  '/api/public/hooks/expurgar-artifacts': typeof ApiPublicHooksExpurgarArtifactsRoute
+  '/api/ia/saudejusia/artifact/$id': typeof ApiIaSaudejusiaArtifactIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/app'
+    | '/cadastro'
+    | '/confirmar-email'
     | '/demo'
     | '/esqueci-senha'
     | '/lgpd'
     | '/login'
+    | '/minha-conta'
     | '/privacidade'
+    | '/recuperar-senha'
     | '/redefinir-senha'
     | '/signup'
     | '/termos'
@@ -212,14 +308,24 @@ export interface FileRouteTypes {
     | '/app/casos/$id'
     | '/app/casos/novo'
     | '/app/casos/'
+    | '/api/ia/saudejusia/analyze'
+    | '/api/ia/saudejusia/classify'
+    | '/api/ia/saudejusia/extract'
+    | '/api/ia/saudejusia/generate'
+    | '/api/public/hooks/expurgar-artifacts'
+    | '/api/ia/saudejusia/artifact/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/cadastro'
+    | '/confirmar-email'
     | '/demo'
     | '/esqueci-senha'
     | '/lgpd'
     | '/login'
+    | '/minha-conta'
     | '/privacidade'
+    | '/recuperar-senha'
     | '/redefinir-senha'
     | '/signup'
     | '/termos'
@@ -232,15 +338,25 @@ export interface FileRouteTypes {
     | '/app/casos/$id'
     | '/app/casos/novo'
     | '/app/casos'
+    | '/api/ia/saudejusia/analyze'
+    | '/api/ia/saudejusia/classify'
+    | '/api/ia/saudejusia/extract'
+    | '/api/ia/saudejusia/generate'
+    | '/api/public/hooks/expurgar-artifacts'
+    | '/api/ia/saudejusia/artifact/$id'
   id:
     | '__root__'
     | '/'
     | '/app'
+    | '/cadastro'
+    | '/confirmar-email'
     | '/demo'
     | '/esqueci-senha'
     | '/lgpd'
     | '/login'
+    | '/minha-conta'
     | '/privacidade'
+    | '/recuperar-senha'
     | '/redefinir-senha'
     | '/signup'
     | '/termos'
@@ -253,16 +369,26 @@ export interface FileRouteTypes {
     | '/app/casos/$id'
     | '/app/casos/novo'
     | '/app/casos/'
+    | '/api/ia/saudejusia/analyze'
+    | '/api/ia/saudejusia/classify'
+    | '/api/ia/saudejusia/extract'
+    | '/api/ia/saudejusia/generate'
+    | '/api/public/hooks/expurgar-artifacts'
+    | '/api/ia/saudejusia/artifact/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  CadastroRoute: typeof CadastroRoute
+  ConfirmarEmailRoute: typeof ConfirmarEmailRoute
   DemoRoute: typeof DemoRoute
   EsqueciSenhaRoute: typeof EsqueciSenhaRoute
   LgpdRoute: typeof LgpdRoute
   LoginRoute: typeof LoginRoute
+  MinhaContaRoute: typeof MinhaContaRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
+  RecuperarSenhaRoute: typeof RecuperarSenhaRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
   SignupRoute: typeof SignupRoute
   TermosRoute: typeof TermosRoute
@@ -271,6 +397,12 @@ export interface RootRouteChildren {
   ApiIaEstimateJurimetricsRoute: typeof ApiIaEstimateJurimetricsRoute
   ApiIaExtractDocumentRoute: typeof ApiIaExtractDocumentRoute
   ApiIaGenerateDeliverableRoute: typeof ApiIaGenerateDeliverableRoute
+  ApiIaSaudejusiaAnalyzeRoute: typeof ApiIaSaudejusiaAnalyzeRoute
+  ApiIaSaudejusiaClassifyRoute: typeof ApiIaSaudejusiaClassifyRoute
+  ApiIaSaudejusiaExtractRoute: typeof ApiIaSaudejusiaExtractRoute
+  ApiIaSaudejusiaGenerateRoute: typeof ApiIaSaudejusiaGenerateRoute
+  ApiPublicHooksExpurgarArtifactsRoute: typeof ApiPublicHooksExpurgarArtifactsRoute
+  ApiIaSaudejusiaArtifactIdRoute: typeof ApiIaSaudejusiaArtifactIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -303,11 +435,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RedefinirSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/recuperar-senha': {
+      id: '/recuperar-senha'
+      path: '/recuperar-senha'
+      fullPath: '/recuperar-senha'
+      preLoaderRoute: typeof RecuperarSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacidade': {
       id: '/privacidade'
       path: '/privacidade'
       fullPath: '/privacidade'
       preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/minha-conta': {
+      id: '/minha-conta'
+      path: '/minha-conta'
+      fullPath: '/minha-conta'
+      preLoaderRoute: typeof MinhaContaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -336,6 +482,20 @@ declare module '@tanstack/react-router' {
       path: '/demo'
       fullPath: '/demo'
       preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confirmar-email': {
+      id: '/confirmar-email'
+      path: '/confirmar-email'
+      fullPath: '/confirmar-email'
+      preLoaderRoute: typeof ConfirmarEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro': {
+      id: '/cadastro'
+      path: '/cadastro'
+      fullPath: '/cadastro'
+      preLoaderRoute: typeof CadastroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -408,6 +568,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiIaClassifyDenialRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/expurgar-artifacts': {
+      id: '/api/public/hooks/expurgar-artifacts'
+      path: '/api/public/hooks/expurgar-artifacts'
+      fullPath: '/api/public/hooks/expurgar-artifacts'
+      preLoaderRoute: typeof ApiPublicHooksExpurgarArtifactsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ia/saudejusia/generate': {
+      id: '/api/ia/saudejusia/generate'
+      path: '/api/ia/saudejusia/generate'
+      fullPath: '/api/ia/saudejusia/generate'
+      preLoaderRoute: typeof ApiIaSaudejusiaGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ia/saudejusia/extract': {
+      id: '/api/ia/saudejusia/extract'
+      path: '/api/ia/saudejusia/extract'
+      fullPath: '/api/ia/saudejusia/extract'
+      preLoaderRoute: typeof ApiIaSaudejusiaExtractRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ia/saudejusia/classify': {
+      id: '/api/ia/saudejusia/classify'
+      path: '/api/ia/saudejusia/classify'
+      fullPath: '/api/ia/saudejusia/classify'
+      preLoaderRoute: typeof ApiIaSaudejusiaClassifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ia/saudejusia/analyze': {
+      id: '/api/ia/saudejusia/analyze'
+      path: '/api/ia/saudejusia/analyze'
+      fullPath: '/api/ia/saudejusia/analyze'
+      preLoaderRoute: typeof ApiIaSaudejusiaAnalyzeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ia/saudejusia/artifact/$id': {
+      id: '/api/ia/saudejusia/artifact/$id'
+      path: '/api/ia/saudejusia/artifact/$id'
+      fullPath: '/api/ia/saudejusia/artifact/$id'
+      preLoaderRoute: typeof ApiIaSaudejusiaArtifactIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -430,11 +632,15 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  CadastroRoute: CadastroRoute,
+  ConfirmarEmailRoute: ConfirmarEmailRoute,
   DemoRoute: DemoRoute,
   EsqueciSenhaRoute: EsqueciSenhaRoute,
   LgpdRoute: LgpdRoute,
   LoginRoute: LoginRoute,
+  MinhaContaRoute: MinhaContaRoute,
   PrivacidadeRoute: PrivacidadeRoute,
+  RecuperarSenhaRoute: RecuperarSenhaRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,
   SignupRoute: SignupRoute,
   TermosRoute: TermosRoute,
@@ -443,6 +649,12 @@ const rootRouteChildren: RootRouteChildren = {
   ApiIaEstimateJurimetricsRoute: ApiIaEstimateJurimetricsRoute,
   ApiIaExtractDocumentRoute: ApiIaExtractDocumentRoute,
   ApiIaGenerateDeliverableRoute: ApiIaGenerateDeliverableRoute,
+  ApiIaSaudejusiaAnalyzeRoute: ApiIaSaudejusiaAnalyzeRoute,
+  ApiIaSaudejusiaClassifyRoute: ApiIaSaudejusiaClassifyRoute,
+  ApiIaSaudejusiaExtractRoute: ApiIaSaudejusiaExtractRoute,
+  ApiIaSaudejusiaGenerateRoute: ApiIaSaudejusiaGenerateRoute,
+  ApiPublicHooksExpurgarArtifactsRoute: ApiPublicHooksExpurgarArtifactsRoute,
+  ApiIaSaudejusiaArtifactIdRoute: ApiIaSaudejusiaArtifactIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
