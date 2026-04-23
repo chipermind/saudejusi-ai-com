@@ -12,10 +12,10 @@ export function Logo({ size = "md", showTagline = false }: LogoProps) {
   return (
     <div className="inline-flex flex-col">
       <span className={`font-bold tracking-tight ${sizeClasses[size]} text-text-primary`}>
-        defere<span className="text-primary">.</span>
+        saudejusia<span className="text-primary">.</span>
       </span>
       {showTagline && (
-        <span className="caption mt-1">Inteligência jurídica em saúde suplementar</span>
+        <span className="caption mt-1">Direitos do beneficiário de plano de saúde</span>
       )}
     </div>
   );

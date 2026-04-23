@@ -10,7 +10,7 @@ export function SiteFooter() {
           <div>
             <Logo size="md" />
             <p className="mt-4 text-sm text-text-tertiary">
-              Tecnologia jurídica para escritórios de direito médico.
+              Tecnologia a serviço do beneficiário de plano de saúde.
             </p>
             <a
               href="https://linkedin.com"
@@ -24,8 +24,8 @@ export function SiteFooter() {
           <div>
             <h4 className="caption mb-4">Produto</h4>
             <ul className="space-y-3 text-sm text-text-secondary">
-              <li><a href="/#produto" className="hover:text-text-primary">Como funciona</a></li>
-              <li><a href="/#jurimetria" className="hover:text-text-primary">Jurimetria</a></li>
+              <li><a href="/#como-funciona" className="hover:text-text-primary">Como funciona</a></li>
+              <li><a href="/#direitos" className="hover:text-text-primary">Direitos</a></li>
               <li><a href="/#precos" className="hover:text-text-primary">Preços</a></li>
             </ul>
           </div>
@@ -36,7 +36,7 @@ export function SiteFooter() {
               <li><a href="/#sobre" className="hover:text-text-primary">Sobre</a></li>
               {/* <li><Link to="/blog" className="hover:text-text-primary">Blog</Link></li> */}
               <li>
-                <a href="mailto:contato@defere.com.br" className="hover:text-text-primary">
+                <a href="mailto:contato@saudejusia.com.br" className="hover:text-text-primary">
                   Contato
                 </a>
               </li>
@@ -55,22 +55,23 @@ export function SiteFooter() {
 
         <div className="mt-16 space-y-4 border-t border-border pt-8">
           <p className="text-xs text-text-tertiary">
-            © 2026 Defere Tecnologia Jurídica Ltda. — CNPJ em processo de registro,
-            atualizaremos aqui assim que concluído.
+            © 2026 SaudeJusia Tecnologia Ltda. CNPJ em processo de registro.
           </p>
           <p className="text-xs text-text-tertiary">
-            WhatsApp disponível após aprovação no beta. Canal ativo:{" "}
+            Canal de contato:{" "}
             <a
-              href="mailto:contato@defere.com.br"
+              href="mailto:contato@saudejusia.com.br"
               className="hover:text-text-primary"
             >
-              contato@defere.com.br
+              contato@saudejusia.com.br
             </a>
             .
           </p>
           <p className="max-w-3xl text-xs leading-relaxed text-text-tertiary">
-            Defere é uma ferramenta de apoio à atividade advocatícia. Não presta serviços
-            jurídicos e não substitui a análise de advogado devidamente habilitado.
+            A SaudeJusia é uma plataforma de informação e geração de documentos para o
+            próprio beneficiário. Não prestamos serviços jurídicos, não representamos
+            usuários em juízo e não somos intermediadores de advocacia. Para ação
+            judicial, consulte um advogado de sua confiança.
           </p>
         </div>
       </div>

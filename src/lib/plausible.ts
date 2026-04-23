@@ -25,7 +25,6 @@ export function trackEvent(event: string, props?: PlausibleProps) {
 export type CtaLocation =
   | "header"
   | "hero"
-  | "pricing_solo"
-  | "pricing_dupla"
-  | "pricing_escritorio"
-  | "pricing_enterprise";
+  | "pricing_livre"
+  | "pricing_essencial"
+  | "pricing_familia";

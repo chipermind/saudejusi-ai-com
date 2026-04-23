@@ -4,14 +4,14 @@ export function SobreSection() {
       <div className="mx-auto max-w-3xl px-6 py-24">
         <p className="caption">Sobre</p>
         <h2 className="mt-4 text-4xl font-semibold tracking-tight text-text-primary">
-          Construído por quem atua no contencioso de saúde.
+          Construído por quem já foi negado.
         </h2>
         <p className="mt-6 text-base leading-relaxed text-text-secondary">
-          O Defere nasceu da observação de um gargalo real: advogados de direito médico
-          gastam metade do tempo produtivo em tarefas de análise e redação que a IA já
-          faz bem, enquanto o trabalho estratégico — negociação, audiência,
-          relacionamento com o cliente — fica espremido. Estamos construindo a
-          ferramenta que queríamos ter quando operávamos o contencioso todos os dias.
+          A SaudeJusia nasceu de uma constatação incômoda: quem paga plano de saúde
+          raramente sabe o que tem direito a exigir — e quando descobre, já gastou
+          tempo, dinheiro e paciência demais. Nosso trabalho é virar essa equação.
+          Colocar o poder da informação e da ferramenta certa na mão de quem paga a
+          conta, para que o "não" da operadora seja só o começo da conversa, não o fim.
         </p>
       </div>
     </section>

@@ -9,8 +9,8 @@ export function HeroCaseCard() {
       <div className="rounded-xl border border-border-strong bg-surface p-6 shadow-2xl">
         <div className="flex items-start justify-between border-b border-border pb-4">
           <div>
-            <p className="caption">Caso #2847</p>
-            <p className="mt-1 text-sm font-medium text-text-primary">M. Silva, 54 anos</p>
+            <p className="caption">Sua situação</p>
+            <p className="mt-1 text-sm font-medium text-text-primary">Beneficiário · plano negado</p>
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-md bg-danger/10 px-2 py-1 text-xs font-medium text-danger">
             <ShieldAlert className="h-3 w-3" /> Negativa
@@ -18,35 +18,35 @@ export function HeroCaseCard() {
         </div>
 
         <div className="mt-4 space-y-3 text-sm">
-          <Row label="Categoria" value="OPME — Prótese de joelho" />
+          <Row label="Procedimento" value="Prótese de joelho (OPME)" />
           <Row label="Operadora" value="Bradesco Saúde" />
           <Row label="CID" value="M17.1" mono />
         </div>
 
         <div className="mt-6 border-t border-border pt-4">
-          <p className="caption mb-3">Análise do Defere</p>
+          <p className="caption mb-3">O que a SaudeJusia diz</p>
           <div className="space-y-3">
             <Metric
-              label="Indicador estatístico de procedência"
-              value="87%"
+              label="Enquadramento"
+              value="Rol ANS"
               tone="success"
             />
-            <Metric label="Dano moral estimado" value="R$ 12.400" />
-            <Metric label="Tempo médio" value="6 meses" />
+            <Metric label="Prazo do plano para resposta" value="10 dias" />
+            <Metric label="Próximo passo" value="Reconsideração" />
+            <Metric label="Se negar de novo" value="NIP ANS" />
           </div>
         </div>
 
         <div className="mt-5 flex items-center gap-2 rounded-lg border border-success/20 bg-success/5 p-3">
           <div className="h-2 w-2 rounded-full bg-success" />
           <p className="text-xs text-text-secondary">
-            Kit jurídico pronto em <span className="font-medium text-text-primary">38h desde o upload</span>
+            Documento pronto em minutos. <span className="font-medium text-text-primary">Sem advogado. Sem custo surpresa.</span>
           </p>
         </div>
       </div>
 
       <p className="mt-3 text-center text-[11px] leading-relaxed text-text-tertiary">
-        Indicadores são baseados em decisões históricas e não constituem garantia de
-        resultado.
+        Cobertura prevista no Rol ANS (RN 465/2021). Prazo de urgência: 3 dias úteis.
       </p>
     </div>
   );
@@ -74,7 +74,7 @@ function Metric({
     <div className="flex items-center justify-between gap-3">
       <span className="text-sm text-text-secondary">{label}</span>
       <span
-        className={`font-mono text-base font-semibold ${
+        className={`font-mono text-sm font-semibold ${
           tone === "success" ? "text-success" : "text-text-primary"
         }`}
       >

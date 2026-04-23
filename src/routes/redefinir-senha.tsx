@@ -11,7 +11,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/redefinir-senha")({
   head: () => ({
     meta: [
-      { title: "Redefinir senha — Defere" },
+      { title: "Redefinir senha — SaudeJusia" },
       { name: "description", content: "Defina uma nova senha para sua conta." },
     ],
   }),

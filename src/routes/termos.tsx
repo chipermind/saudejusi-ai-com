@@ -5,8 +5,8 @@ import { SiteFooter } from "@/components/landing/SiteFooter";
 export const Route = createFileRoute("/termos")({
   head: () => ({
     meta: [
-      { title: "Termos de uso — Defere" },
-      { name: "description", content: "Termos de uso da plataforma Defere." },
+      { title: "Termos de uso — SaudeJusia" },
+      { name: "description", content: "Termos de uso da plataforma SaudeJusia." },
     ],
   }),
   component: TermosPage,
@@ -25,10 +25,10 @@ function TermosPage() {
           Documento em elaboração. Última atualização: abril/2026. Para dúvidas,
           escreva para{" "}
           <a
-            href="mailto:contato@defere.com.br"
+            href="mailto:contato@saudejusia.com.br"
             className="text-primary hover:text-primary/80"
           >
-            contato@defere.com.br
+            contato@saudejusia.com.br
           </a>
           .
         </p>

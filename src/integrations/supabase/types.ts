@@ -385,37 +385,49 @@ export type Database = {
         Row: {
           created_at: string
           email: string
-          firm_size: string
+          firm_size: string | null
           honeypot: string | null
           id: string
           monthly_case_volume: string | null
+          nome_completo: string | null
           notes: string | null
-          oab_number: string
-          oab_state: string
+          oab_number: string | null
+          oab_state: string | null
+          operadora: string | null
+          plan_type: string | null
+          situacao: string | null
           user_agent: string | null
         }
         Insert: {
           created_at?: string
           email: string
-          firm_size: string
+          firm_size?: string | null
           honeypot?: string | null
           id?: string
           monthly_case_volume?: string | null
+          nome_completo?: string | null
           notes?: string | null
-          oab_number: string
-          oab_state: string
+          oab_number?: string | null
+          oab_state?: string | null
+          operadora?: string | null
+          plan_type?: string | null
+          situacao?: string | null
           user_agent?: string | null
         }
         Update: {
           created_at?: string
           email?: string
-          firm_size?: string
+          firm_size?: string | null
           honeypot?: string | null
           id?: string
           monthly_case_volume?: string | null
+          nome_completo?: string | null
           notes?: string | null
-          oab_number?: string
-          oab_state?: string
+          oab_number?: string | null
+          oab_state?: string | null
+          operadora?: string | null
+          plan_type?: string | null
+          situacao?: string | null
           user_agent?: string | null
         }
         Relationships: []

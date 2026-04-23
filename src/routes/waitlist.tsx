@@ -17,26 +17,39 @@ import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
 import { trackEvent } from "@/lib/plausible";
 
-const UF = [
-  "AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB",
-  "PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO",
-];
+const PLAN_TYPE_OPTIONS = [
+  { value: "individual", label: "Individual" },
+  { value: "familiar", label: "Familiar" },
+  { value: "empresarial", label: "Empresarial" },
+  { value: "nao_tenho_plano", label: "Não tenho plano ainda" },
+] as const;
 
-const FIRM_SIZE_OPTIONS: { value: string; label: string }[] = [
-  { value: "solo", label: "Solo" },
-  { value: "2-3", label: "2-3 advogados" },
-  { value: "4-10", label: "4-10 advogados" },
-  { value: "11+", label: "11+" },
+const SITUACAO_OPTIONS = [
+  { value: "caso_ativo", label: "Tenho um caso ativo com negativa" },
+  { value: "ja_resolvi_quero_aprender", label: "Já resolvi um caso e quero me preparar" },
+  { value: "nenhum_caso_mas_tenho_plano", label: "Tenho plano mas sem caso ativo" },
+  { value: "nao_tenho_plano", label: "Não tenho plano mas quero me informar" },
+] as const;
+
+const OPERADORAS_SUGERIDAS = [
+  "Bradesco Saúde",
+  "Amil",
+  "Hapvida / NotreDame Intermédica",
+  "Unimed",
+  "SulAmérica",
+  "Prevent Senior",
+  "Outra",
+  "Não tenho plano",
 ];
 
 export const Route = createFileRoute("/waitlist")({
   head: () => ({
     meta: [
-      { title: "Entrar na waitlist — Defere" },
+      { title: "Entrar na waitlist — SaudeJusia" },
       {
         name: "description",
         content:
-          "Solicite convite para o beta fechado do Defere — IA jurídica para escritórios de direito médico.",
+          "Solicite convite para o beta fechado da SaudeJusia — direitos do beneficiário de plano de saúde.",
       },
     ],
   }),
@@ -45,10 +58,10 @@ export const Route = createFileRoute("/waitlist")({
 
 function WaitlistPage() {
   const [email, setEmail] = useState("");
-  const [oabNumber, setOabNumber] = useState("");
-  const [oabState, setOabState] = useState("");
-  const [firmSize, setFirmSize] = useState("");
-  const [monthlyVolume, setMonthlyVolume] = useState("");
+  const [nomeCompleto, setNomeCompleto] = useState("");
+  const [operadora, setOperadora] = useState("");
+  const [planType, setPlanType] = useState("");
+  const [situacao, setSituacao] = useState("");
   // Honeypot field — must remain empty for legitimate users.
   const [website, setWebsite] = useState("");
   const [accepted, setAccepted] = useState(false);
@@ -68,12 +81,16 @@ function WaitlistPage() {
       toast.error("Você precisa aceitar os termos.");
       return;
     }
-    if (!oabState) {
-      toast.error("Selecione o estado da OAB.");
+    if (!planType) {
+      toast.error("Selecione o tipo do seu plano.");
       return;
     }
-    if (!firmSize) {
-      toast.error("Selecione o porte do escritório.");
+    if (!situacao) {
+      toast.error("Selecione a sua situação atual.");
+      return;
+    }
+    if (!operadora.trim()) {
+      toast.error("Informe a operadora do seu plano.");
       return;
     }
 
@@ -84,10 +101,10 @@ function WaitlistPage() {
 
     const { error } = await supabase.from("waitlist").insert({
       email: email.trim(),
-      oab_number: oabNumber.trim(),
-      oab_state: oabState,
-      firm_size: firmSize,
-      monthly_case_volume: monthlyVolume.trim() || null,
+      nome_completo: nomeCompleto.trim(),
+      operadora: operadora.trim(),
+      plan_type: planType,
+      situacao,
       user_agent: userAgent,
     });
 
@@ -117,8 +134,9 @@ function WaitlistPage() {
     }
 
     trackEvent("Waitlist Submit", {
-      firm_size: firmSize,
-      has_volume: String(monthlyVolume.trim().length > 0),
+      plan_type: planType,
+      situacao,
+      has_operadora: String(operadora.trim().length > 0),
     });
 
     setSubmitted(true);
@@ -142,7 +160,7 @@ function WaitlistPage() {
               </h1>
               <p className="mt-3 text-sm leading-relaxed text-text-secondary">
                 Recebemos seu pedido. Convites são enviados por ordem de chegada e
-                perfil de escritório. Acompanhe o e-mail informado.
+                perfil. Fique de olho no e-mail.
               </p>
               <div className="mt-8">
                 <Link to="/">
@@ -163,7 +181,7 @@ function WaitlistPage() {
 
               <form onSubmit={handleSubmit} className="mt-8 space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email profissional</Label>
+                  <Label htmlFor="email">E-mail</Label>
                   <Input
                     id="email"
                     type="email"
@@ -174,41 +192,48 @@ function WaitlistPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-[1fr_120px] gap-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="oab">Número da OAB</Label>
-                    <Input
-                      id="oab"
-                      value={oabNumber}
-                      onChange={(e) => setOabNumber(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="oab_state">UF</Label>
-                    <Select value={oabState} onValueChange={setOabState}>
-                      <SelectTrigger id="oab_state">
-                        <SelectValue placeholder="UF" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {UF.map((s) => (
-                          <SelectItem key={s} value={s}>
-                            {s}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="nome">Nome completo</Label>
+                  <Input
+                    id="nome"
+                    type="text"
+                    autoComplete="name"
+                    value={nomeCompleto}
+                    onChange={(e) => setNomeCompleto(e.target.value)}
+                    minLength={2}
+                    maxLength={200}
+                    required
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="firm_size">Porte do escritório</Label>
-                  <Select value={firmSize} onValueChange={setFirmSize}>
-                    <SelectTrigger id="firm_size">
+                  <Label htmlFor="operadora">Operadora do seu plano</Label>
+                  <Input
+                    id="operadora"
+                    type="text"
+                    list="operadoras-sugeridas"
+                    placeholder="Ex.: Bradesco, Amil, Unimed…"
+                    value={operadora}
+                    onChange={(e) => setOperadora(e.target.value)}
+                    minLength={2}
+                    maxLength={200}
+                    required
+                  />
+                  <datalist id="operadoras-sugeridas">
+                    {OPERADORAS_SUGERIDAS.map((o) => (
+                      <option key={o} value={o} />
+                    ))}
+                  </datalist>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="plan_type">Tipo do seu plano</Label>
+                  <Select value={planType} onValueChange={setPlanType}>
+                    <SelectTrigger id="plan_type">
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
-                      {FIRM_SIZE_OPTIONS.map((o) => (
+                      {PLAN_TYPE_OPTIONS.map((o) => (
                         <SelectItem key={o.value} value={o.value}>
                           {o.label}
                         </SelectItem>
@@ -218,17 +243,19 @@ function WaitlistPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="volume">
-                    Volume mensal estimado de casos de direito médico{" "}
-                    <span className="text-text-tertiary">(opcional)</span>
-                  </Label>
-                  <Input
-                    id="volume"
-                    placeholder="Ex.: 5 a 10 casos/mês"
-                    value={monthlyVolume}
-                    onChange={(e) => setMonthlyVolume(e.target.value)}
-                    maxLength={50}
-                  />
+                  <Label htmlFor="situacao">Sua situação agora</Label>
+                  <Select value={situacao} onValueChange={setSituacao}>
+                    <SelectTrigger id="situacao">
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SITUACAO_OPTIONS.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {/*
@@ -268,7 +295,7 @@ function WaitlistPage() {
                     aria-label="Aceitar termos"
                   />
                   <span>
-                    Concordo com os{" "}
+                    Li e concordo com os{" "}
                     <Link to="/termos" className="text-primary hover:text-primary/80">
                       Termos
                     </Link>{" "}
@@ -279,7 +306,7 @@ function WaitlistPage() {
                     >
                       Política de Privacidade
                     </Link>
-                    .
+                    . Autorizo o tratamento dos meus dados pessoais conforme a LGPD.
                   </span>
                 </label>
 
@@ -287,13 +314,6 @@ function WaitlistPage() {
                   {loading ? "Enviando..." : "Solicitar convite"}
                 </Button>
               </form>
-
-              <p className="mt-6 text-center text-sm text-text-secondary">
-                Já tem conta?{" "}
-                <Link to="/login" className="text-primary hover:text-primary/80">
-                  Entrar →
-                </Link>
-              </p>
             </>
           )}
         </div>
