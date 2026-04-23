@@ -381,6 +381,39 @@ export type Database = {
           },
         ]
       }
+      waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          firm_size: string
+          id: string
+          monthly_case_volume: string | null
+          notes: string | null
+          oab_number: string
+          oab_state: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          firm_size: string
+          id?: string
+          monthly_case_volume?: string | null
+          notes?: string | null
+          oab_number: string
+          oab_state: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          firm_size?: string
+          id?: string
+          monthly_case_volume?: string | null
+          notes?: string | null
+          oab_number?: string
+          oab_state?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
