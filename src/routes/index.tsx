@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Check, Upload, Sparkles, BarChart3, FileText } from "lucide-react";
+import { ArrowRight, Check, MessageSquare, BookOpen, FileText, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -19,21 +19,23 @@ import { trackEvent, type CtaLocation } from "@/lib/plausible";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Defere — Do laudo à liminar em 48 horas" },
+      { title: "SaudeJusia — Seus direitos no plano de saúde" },
       {
         name: "description",
         content:
-          "Defere — IA jurídica especializada em negativas de planos de saúde. Do laudo à liminar em 48 horas. Análise, jurimetria e geração de peças para escritórios de direito médico.",
+          "Plataforma que ajuda beneficiários de plano de saúde a entender e exercer seus direitos. Gere notificações, recursos à ANS e reconsiderações sem precisar de advogado.",
       },
-      { property: "og:title", content: "Defere — Inteligência jurídica em saúde suplementar" },
+      { property: "og:title", content: "SaudeJusia — Seus direitos no plano de saúde" },
       {
         property: "og:description",
-        content: "Do laudo à liminar em 48 horas. Análise de negativas de plano de saúde, jurimetria e geração de peças com IA.",
+        content:
+          "Plataforma que ajuda beneficiários de plano de saúde a entender e exercer seus direitos. Gere notificações, recursos à ANS e reconsiderações sem precisar de advogado.",
       },
-      { name: "twitter:title", content: "Defere — Inteligência jurídica em saúde suplementar" },
+      { name: "twitter:title", content: "SaudeJusia — Seus direitos no plano de saúde" },
       {
         name: "twitter:description",
-        content: "Do laudo à liminar em 48 horas. Para escritórios de direito médico.",
+        content:
+          "Entenda e exerça seus direitos como beneficiário. Gere documentos sem advogado.",
       },
     ],
   }),
@@ -48,7 +50,7 @@ function LandingPage() {
       <Problem />
       <HowItWorks />
       <Testimonials />
-      <Jurimetria />
+      <Direitos />
       <Pricing />
       <Faq />
       <SobreSection />
@@ -67,20 +69,21 @@ function Hero() {
 
       <div className="mx-auto grid max-w-7xl items-center gap-16 px-6 py-24 lg:grid-cols-[1.1fr_0.9fr] lg:py-32">
         <div>
-          <p className="caption-blue">Inteligência jurídica em saúde suplementar</p>
+          <p className="caption-blue">Direitos do beneficiário de plano de saúde</p>
           <h1 className="mt-6 text-5xl font-semibold leading-[1.05] tracking-tight text-text-primary sm:text-6xl">
-            Do laudo à liminar
+            Seu plano negou.
             <br />
-            <span className="text-text-secondary">em 48 horas.</span>
+            <span className="text-text-secondary">A gente te mostra como virar o jogo.</span>
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-text-secondary">
-            A plataforma de IA que analisa negativas de plano de saúde, prevê o êxito do caso e
-            gera o parecer, o recurso à ANS e a petição inicial com tutela de urgência. Para
-            escritórios que atuam com direito médico.
+            A SaudeJusia é a plataforma que explica, em linguagem clara, os seus direitos
+            como beneficiário de plano de saúde — e gera as notificações, os recursos à
+            ANS e as cartas de reconsideração que você mesmo envia. Sem advogado no
+            meio. Sem custo surpresa.
           </p>
           <p className="mt-4 max-w-xl text-xs leading-relaxed text-text-tertiary">
-            Plataforma exclusiva para advogados. Não prestamos serviços jurídicos nem
-            intermediamos contratação de advocacia.
+            Serviço de informação e geração de documentos para o próprio beneficiário.
+            Não prestamos serviços jurídicos e não representamos o usuário em juízo.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <Link
@@ -91,14 +94,15 @@ function Hero() {
                 Entrar na waitlist <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
             </Link>
-            <a href="#produto">
+            <a href="#como-funciona">
               <Button size="lg" variant="ghost" className="h-11 px-6">
                 Ver como funciona
               </Button>
             </a>
           </div>
           <p className="mt-10 text-xs text-text-tertiary">
-            Construído por e para advogados de direito médico. Beta fechado em andamento — acesso por convite.
+            Construído ao lado de beneficiários, médicos e especialistas em saúde
+            suplementar. Beta fechado · lançamento público em 2026.
           </p>
         </div>
 
@@ -114,19 +118,21 @@ function Hero() {
 function Problem() {
   const stats = [
     {
-      value: "Maioria",
-      label: "das negativas de plano de saúde é revertida no Judiciário",
-      source: "IESS, 2023",
+      value: "6 em cada 10",
+      label:
+        "negativas de plano são revertidas na via administrativa, sem processo judicial",
+      source: "dados agregados de NIPs resolvidas na ANS (2023)",
     },
     {
-      value: "R$ 4.2 bi",
-      label: "em demandas contra operadoras em 2024",
-      source: "ANS, 2024",
+      value: "R$ 4,2 bi",
+      label: "em demandas contra operadoras de plano de saúde só em 2024",
+      source: "ANS",
     },
     {
-      value: "47 dias",
-      label: "tempo médio que um advogado gasta montando um caso do zero",
-      source: null,
+      value: "80%",
+      label:
+        "dos beneficiários desistem no primeiro \"não\" do plano porque não sabem o caminho",
+      source: "pesquisa Proteste sobre saúde suplementar",
     },
   ];
   return (
@@ -135,9 +141,9 @@ function Problem() {
         <div className="max-w-3xl">
           <p className="caption">O problema</p>
           <h2 className="mt-4 text-4xl font-semibold tracking-tight text-text-primary">
-            Negar virou estratégia.
+            Quem paga plano, paga duas vezes:
             <br />
-            <span className="text-text-tertiary">Reverter virou burocracia.</span>
+            <span className="text-text-tertiary">na mensalidade e no tempo perdido.</span>
           </h2>
         </div>
 
@@ -164,38 +170,38 @@ function HowItWorks() {
   const steps = [
     {
       n: "01",
-      icon: Upload,
-      title: "Upload",
-      desc: "Anexe a carta de negativa, laudo, contrato e carteirinha. OCR extrai tudo automaticamente.",
+      icon: MessageSquare,
+      title: "Conte o que aconteceu",
+      desc: "Descreva a negativa em linguagem comum. Anexe a carta do plano, o pedido médico e a carteirinha. A gente cuida do resto.",
     },
     {
       n: "02",
-      icon: Sparkles,
-      title: "Análise",
-      desc: "A IA classifica a negativa em uma das 16 categorias de recusa e cruza com a jurisprudência aplicável.",
+      icon: BookOpen,
+      title: "Entenda seu direito",
+      desc: "Em minutos, você recebe uma explicação clara do que diz a ANS, o seu contrato e a jurisprudência sobre o seu caso específico.",
     },
     {
       n: "03",
-      icon: BarChart3,
-      title: "Previsão",
-      desc: "Você recebe indicadores estatísticos de procedência, tempo médio e faixa de dano moral observada na sua comarca.",
+      icon: FileText,
+      title: "Gere o documento certo",
+      desc: "Reconsideração para a operadora, NIP para a ANS, notificação extrajudicial, carta médica de urgência — cada documento no formato certo para o canal certo.",
     },
     {
       n: "04",
-      icon: FileText,
-      title: "Entrega",
-      desc: "Parecer, recurso à ANS, notificação e petição inicial com tutela de urgência — prontos para revisão.",
+      icon: Bell,
+      title: "Acompanhe a resposta",
+      desc: "A gente te lembra dos prazos, avisa quando a operadora responder e indica o próximo passo se a negativa continuar.",
     },
   ];
   return (
-    <section id="produto" className="border-b border-border bg-background">
+    <section id="como-funciona" className="border-b border-border bg-background">
       <div className="mx-auto max-w-7xl px-6 py-24">
         <div className="max-w-3xl">
           <p className="caption">Como funciona</p>
           <h2 className="mt-4 text-4xl font-semibold tracking-tight text-text-primary">
             Quatro passos.
             <br />
-            <span className="text-text-tertiary">Quarenta e oito horas.</span>
+            <span className="text-text-tertiary">Do "não" do plano à virada do jogo.</span>
           </h2>
         </div>
 
@@ -216,28 +222,28 @@ function HowItWorks() {
   );
 }
 
-/* ---------- Jurimetria ---------- */
-function Jurimetria() {
+/* ---------- Direitos (substitui Jurimetria) ---------- */
+function Direitos() {
   return (
-    <section id="jurimetria" className="border-b border-border bg-surface">
+    <section id="direitos" className="border-b border-border bg-surface">
       <div className="mx-auto grid max-w-7xl items-center gap-16 px-6 py-24 lg:grid-cols-2">
         <div>
-          <p className="caption">Jurimetria</p>
+          <p className="caption">Direitos, não opinião</p>
           <h2 className="mt-4 text-4xl font-semibold tracking-tight text-text-primary">
-            Decisões baseadas em
+            Suas chances baseadas em
             <br />
-            <span className="text-text-tertiary">dados, não em achismo.</span>
+            <span className="text-text-tertiary">dados reais da ANS e dos tribunais.</span>
           </h2>
           <p className="mt-6 max-w-lg text-base leading-relaxed text-text-secondary">
-            Cruzamos tipo de negativa, operadora, comarca e juízo para entregar
-            indicadores estatísticos de procedência e faixas históricas de condenação
-            por dano moral — atualizado a cada nova decisão publicada.
+            Cruzamos o tipo de negativa, a operadora e o histórico de resolução
+            administrativa e judicial para mostrar, em linguagem clara, qual o caminho
+            mais rápido e barato para o seu caso — antes de você gastar com advogado.
           </p>
           <ul className="mt-8 space-y-3 text-sm text-text-secondary">
             {[
-              "Baseline público v1 cobre as 16 categorias de negativa com estratificação por tribunal",
-              "Atualização trimestral conforme novas edições dos relatórios oficiais (CNJ, ANS, STJ)",
-              "Modelo evolui para jurimetria proprietária conforme escritórios utilizam a plataforma",
+              "Base atualizada com decisões de NIPs na ANS e processos em tribunais estaduais",
+              "Recortes por tipo de negativa (OPME, oncologia, home care, saúde mental, urgência)",
+              "Tempo médio de resposta por operadora",
             ].map((item) => (
               <li key={item} className="flex items-start gap-3">
                 <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-success" />
@@ -261,79 +267,50 @@ type Plan = {
   features: string[];
   highlighted: boolean;
   ctaLocation: CtaLocation;
-  cta: { label: string; to?: "/waitlist"; href?: string };
 };
 
 function Pricing() {
   const plans: Plan[] = [
     {
-      name: "Solo",
-      price: "R$ 497",
-      desc: "Para o advogado individual.",
+      name: "Livre",
+      price: "Grátis",
+      desc: "Para quem quer entender seus direitos.",
       features: [
-        "1 advogado",
-        "Até 20 casos por mês",
-        "Wizard completo de análise",
-        "Geração de parecer, recurso ANS, notificação e petição",
-        "Jurimetria baseline",
-        "Exportação .docx/.pdf (sem integração PJe)",
-        "Suporte por email",
+        "Biblioteca completa de direitos do beneficiário",
+        "2 consultas com a IA da SaudeJusia por mês",
+        "1 documento gerado por mês (reconsideração ou NIP)",
+        "Comunidade de beneficiários",
       ],
       highlighted: false,
-      ctaLocation: "pricing_solo",
-      cta: { label: "Entrar na waitlist", to: "/waitlist" },
+      ctaLocation: "pricing_livre",
     },
     {
-      name: "Dupla",
-      price: "R$ 897",
-      desc: "Para bancas enxutas de 2 a 3 advogados.",
+      name: "Essencial",
+      price: "R$ 29",
+      desc: "Para quem tem um caso ativo agora.",
       features: [
-        "Até 3 advogados",
-        "60 casos por mês",
-        "Todas as features core",
-        "Integração PJe incluída",
-        "Suporte por email prioritário",
+        "Tudo do Livre, mais:",
+        "IA ilimitada",
+        "Geração ilimitada de documentos (NIP, reconsideração, notificação, carta de urgência)",
+        "Rastreador de prazos automático",
+        "Alertas por e-mail e WhatsApp",
+        "Suporte humano em até 24h",
       ],
       highlighted: true,
-      ctaLocation: "pricing_dupla",
-      cta: { label: "Entrar na waitlist", to: "/waitlist" },
+      ctaLocation: "pricing_essencial",
     },
     {
-      name: "Escritório",
-      price: "R$ 1.497",
-      desc: "Para escritórios em crescimento.",
+      name: "Família",
+      price: "R$ 49",
+      desc: "Para cuidar de quem você ama.",
       features: [
-        "Até 5 advogados",
-        "Casos ilimitados",
-        "Tudo do plano Dupla",
-        "Integração PJe + jurimetria avançada por tribunal e operadora",
-        "Biblioteca de minutas editáveis",
-        "Suporte prioritário",
+        "Tudo do Essencial",
+        "Até 4 beneficiários (você + dependentes)",
+        "Histórico consolidado da família",
+        "Perfil específico para idosos e crianças",
       ],
       highlighted: false,
-      ctaLocation: "pricing_escritorio",
-      cta: { label: "Entrar na waitlist", to: "/waitlist" },
-    },
-    {
-      name: "Enterprise",
-      price: "Sob consulta",
-      desc: "Para operações de alto volume.",
-      features: [
-        "6+ advogados",
-        "Tudo do plano Escritório",
-        "Jurimetria proprietária do escritório",
-        "API de integração",
-        "White-label",
-        "Integração PJe customizada",
-        "SLA dedicado",
-      ],
-      highlighted: false,
-      ctaLocation: "pricing_enterprise",
-      cta: {
-        label: "Falar com vendas",
-        href:
-          "mailto:contato@defere.com.br?subject=Defere%20Enterprise%20%E2%80%94%20solicita%C3%A7%C3%A3o%20de%20proposta",
-      },
+      ctaLocation: "pricing_familia",
     },
   ];
 
@@ -343,24 +320,21 @@ function Pricing() {
         <div className="max-w-3xl">
           <p className="caption">Preços</p>
           <h2 className="mt-4 text-4xl font-semibold tracking-tight text-text-primary">
-            Um plano por porte de escritório.
+            Acessível para quem mais precisa.
           </h2>
-          <p className="mt-4 text-base text-text-secondary">14 dias grátis, sem cartão.</p>
         </div>
 
         {/* ROI block */}
         <div className="mt-10 rounded-xl border border-border bg-surface p-6">
           <p className="text-sm leading-relaxed text-text-secondary">
-            Um caso de OPME revertido gera em média{" "}
+            Uma mensalidade por menos do que um remédio de farmácia.{" "}
             <span className="font-medium text-text-primary">
-              R$ 30–80 mil em honorários contratuais
+              Uma negativa revertida paga 30 anos de assinatura.
             </span>
-            . Se o Defere ajudar você a ganhar 1 caso adicional por mês, a assinatura
-            Solo se paga em 60x.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {plans.map((p) => (
             <Card
               key={p.name}
@@ -396,34 +370,28 @@ function Pricing() {
                 ))}
               </ul>
               <div className="mt-auto">
-                {p.cta.href ? (
-                  <a href={p.cta.href}>
-                    <Button
-                      className="w-full"
-                      variant={p.highlighted ? "default" : "secondary"}
-                    >
-                      {p.cta.label}
-                    </Button>
-                  </a>
-                ) : (
-                  <Link
-                    to={p.cta.to ?? "/waitlist"}
-                    onClick={() =>
-                      trackEvent("CTA Click", { location: p.ctaLocation })
-                    }
+                <Link
+                  to="/waitlist"
+                  onClick={() =>
+                    trackEvent("CTA Click", { location: p.ctaLocation })
+                  }
+                >
+                  <Button
+                    className="w-full"
+                    variant={p.highlighted ? "default" : "secondary"}
                   >
-                    <Button
-                      className="w-full"
-                      variant={p.highlighted ? "default" : "secondary"}
-                    >
-                      {p.cta.label}
-                    </Button>
-                  </Link>
-                )}
+                    Entrar na waitlist
+                  </Button>
+                </Link>
               </div>
             </Card>
           ))}
         </div>
+
+        <p className="mt-8 text-xs leading-relaxed text-text-tertiary">
+          14 dias grátis em qualquer plano pago. Cancele quando quiser, sem multa.
+          Cobrança mensal, sem fidelidade — Código de Defesa do Consumidor (Lei 8.078/90).
+        </p>
       </div>
     </section>
   );
@@ -433,32 +401,32 @@ function Pricing() {
 function Faq() {
   const items = [
     {
-      q: "A IA substitui o advogado?",
-      a: "Não. O Defere é uma ferramenta de apoio à atividade advocatícia. Todas as peças geradas — pareceres, recursos à ANS, notificações e petições iniciais — são rascunhos que exigem revisão e assinatura de advogado habilitado. Nosso papel é eliminar as 40 horas de pesquisa e redação inicial, não a responsabilidade técnica do profissional.",
+      q: "A SaudeJusia substitui um advogado?",
+      a: "Não. Nós te ajudamos a resolver sua negativa na via administrativa — conversando com a operadora e, se preciso, com a ANS. Isso resolve a maioria dos casos sem precisar de processo. Se o seu caso precisar ir para o Judiciário, indicamos esse caminho e orientamos sobre como encontrar um advogado de sua confiança. Nós não representamos você em juízo.",
     },
     {
-      q: "Como vocês garantem LGPD com dados de saúde?",
-      a: "Dados de saúde são pessoais sensíveis (art. 11, LGPD). Tratamos com: (i) criptografia em repouso (AES-256) e em trânsito (TLS 1.3); (ii) segregação lógica por escritório (tenant isolation); (iii) retenção configurável pelo escritório, com expurgo padrão em 5 anos após encerramento do caso; (iv) DPO nomeado e canal dedicado em privacidade@defere.com.br; (v) contrato de operador LGPD firmado com cada escritório cliente, posicionando o escritório como controlador e o Defere como operador. Relatório de Impacto (RIPD) disponível sob NDA para escritórios em avaliação.",
+      q: "É seguro enviar meus dados de saúde para vocês?",
+      a: "Sim. Dados de saúde são pessoais sensíveis (art. 11, LGPD) e tratamos com: criptografia AES-256 em repouso e TLS 1.3 em trânsito; segregação por usuário; você pode apagar tudo a qualquer momento em dois cliques; DPO nomeado e canal dedicado em privacidade@saudejusia.com.br. Nunca vendemos, nunca compartilhamos com operadoras, nunca usamos seus dados para treinar modelos de IA de terceiros.",
     },
     {
-      q: "De onde vem a base de jurisprudência?",
-      a: "Usamos coleta pública de decisões a partir de DJEs estaduais, do DataJud/CNJ e dos portais de tribunais, com filtros para excluir processos sob segredo de justiça e mascarar dados pessoais de terceiros antes do ingest. A base é recortada para direito médico e atualizada diariamente.",
+      q: "Vocês têm vínculo com a ANS ou com alguma operadora?",
+      a: "Não. A SaudeJusia é uma iniciativa privada e independente. Não somos fiscalizados pela ANS, não somos parceiros de nenhuma operadora, não recebemos comissão quando você move um processo. Nosso único cliente é você.",
     },
     {
-      q: "Posso integrar com o PJe?",
-      a: "Sim. A integração com PJe (peticionamento eletrônico via certificado A3/A1 do advogado) está disponível a partir do plano Dupla. No plano Solo, você exporta a peça em .docx/.pdf pronta para protocolo manual.",
+      q: "E se a operadora continuar negando depois da reconsideração e da NIP?",
+      a: "Esgotada a via administrativa, o caminho é o Judiciário. A SaudeJusia prepara um dossiê organizado (cronologia dos pedidos, negativas, respostas da ANS, documentos médicos) que você leva a um advogado de sua escolha. Escritório e advogado são contratação sua, direta, sem intermediação nossa.",
     },
     {
-      q: "O escritório vira cliente exclusivo de vocês?",
-      a: "Não há exclusividade. Você pode usar o Defere em paralelo a outras ferramentas e cancelar a qualquer momento com efeito no fim do ciclo corrente de cobrança.",
+      q: "Quanto custa usar a SaudeJusia?",
+      a: "O Plano Livre é grátis para sempre e já resolve casos simples. O Plano Essencial custa R$ 29/mês e serve para quem tem um caso ativo agora — uma mensalidade é menos que uma caixa de remédio, e uma negativa revertida paga anos de assinatura. Sem fidelidade, cancela quando quiser.",
     },
     {
       q: "Quando o beta abre?",
-      a: "O beta fechado está em operação com escritórios-piloto selecionados. A abertura pública está prevista para o segundo semestre de 2026. Entre na waitlist para receber convite prioritário.",
+      a: "O beta fechado está rodando com um grupo pequeno de beneficiários convidados. A abertura pública está prevista para o segundo semestre de 2026. Entre na waitlist para receber convite prioritário.",
     },
   ];
   return (
-    <section className="border-b border-border bg-surface">
+    <section id="faq" className="border-b border-border bg-surface">
       <div className="mx-auto max-w-3xl px-6 py-24">
         <p className="caption">Perguntas frequentes</p>
         <h2 className="mt-4 text-4xl font-semibold tracking-tight text-text-primary">
