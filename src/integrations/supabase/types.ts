@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_artifacts: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          expires_at: string
+          id: string
+          prompt_version: string
+          storage_path: string
+          task: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          deleted_at?: string | null
+          expires_at: string
+          id?: string
+          prompt_version: string
+          storage_path: string
+          task: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          deleted_at?: string | null
+          expires_at?: string
+          id?: string
+          prompt_version?: string
+          storage_path?: string
+          task?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_calls_log: {
         Row: {
           call_type: string
@@ -81,9 +114,11 @@ export type Database = {
           created_at: string
           fora_de_escopo: boolean
           id: string
+          injection_attempted: boolean
           latency_ms: number | null
           model: string
           prompt_version: string
+          retries_used: number
           retry_count: number
           task: string
           tokens_in: number | null
@@ -97,9 +132,11 @@ export type Database = {
           created_at?: string
           fora_de_escopo?: boolean
           id?: string
+          injection_attempted?: boolean
           latency_ms?: number | null
           model: string
           prompt_version: string
+          retries_used?: number
           retry_count?: number
           task: string
           tokens_in?: number | null
@@ -113,15 +150,38 @@ export type Database = {
           created_at?: string
           fora_de_escopo?: boolean
           id?: string
+          injection_attempted?: boolean
           latency_ms?: number | null
           model?: string
           prompt_version?: string
+          retries_used?: number
           retry_count?: number
           task?: string
           tokens_in?: number | null
           tokens_out?: number | null
           user_id?: string | null
           validation_passed?: boolean
+        }
+        Relationships: []
+      }
+      ai_rate_limits: {
+        Row: {
+          count: number
+          day: string
+          task: string
+          user_id: string
+        }
+        Insert: {
+          count?: number
+          day?: string
+          task: string
+          user_id: string
+        }
+        Update: {
+          count?: number
+          day?: string
+          task?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -432,6 +492,33 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          nome_completo: string
+          operadora: string | null
+          plan_tier: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          nome_completo: string
+          operadora?: string | null
+          plan_tier?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome_completo?: string
+          operadora?: string | null
+          plan_tier?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       waitlist: {
         Row: {
           created_at: string
@@ -489,6 +576,18 @@ export type Database = {
     }
     Functions: {
       current_law_firm_id: { Args: never; Returns: string }
+      increment_rate_limit: {
+        Args: {
+          p_day: string
+          p_limit: number
+          p_task: string
+          p_user_id: string
+        }
+        Returns: {
+          allowed: boolean
+          new_count: number
+        }[]
+      }
       signup_create_firm: {
         Args: {
           _firm_name: string
