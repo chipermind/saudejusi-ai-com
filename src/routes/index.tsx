@@ -406,7 +406,12 @@ function Pricing() {
                     </Button>
                   </a>
                 ) : (
-                  <Link to={p.cta.to ?? "/signup"}>
+                  <Link
+                    to={p.cta.to ?? "/waitlist"}
+                    onClick={() =>
+                      trackEvent("CTA Click", { location: p.ctaLocation })
+                    }
+                  >
                     <Button
                       className="w-full"
                       variant={p.highlighted ? "default" : "secondary"}
@@ -459,7 +464,17 @@ function Faq() {
         <h2 className="mt-4 text-4xl font-semibold tracking-tight text-text-primary">
           Dúvidas comuns.
         </h2>
-        <Accordion type="single" collapsible className="mt-12">
+        <Accordion
+          type="single"
+          collapsible
+          className="mt-12"
+          onValueChange={(value) => {
+            if (!value) return;
+            const idx = Number(value.replace("item-", ""));
+            const q = items[idx]?.q;
+            if (q) trackEvent("FAQ Open", { question: q.slice(0, 50) });
+          }}
+        >
           {items.map((it, i) => (
             <AccordionItem key={i} value={`item-${i}`} className="border-border">
               <AccordionTrigger className="text-left text-base font-medium text-text-primary hover:no-underline">
