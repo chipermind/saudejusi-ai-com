@@ -54,8 +54,15 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-16 space-y-4 border-t border-border pt-8">
+          {/*
+            LGPD art. 41 exige controlador identificável. Ltda. sem registro não é
+            pessoa jurídica — atribuímos a responsabilidade pelo tratamento à pessoa
+            física até a conclusão do registro da Ltda. para evitar vácuo legal.
+          */}
           <p className="text-xs text-text-tertiary">
-            © 2026 SaudeJusia Tecnologia Ltda. CNPJ em processo de registro.
+            © 2026 SaudeJusia. Operado por Luis Felipe Campos (pessoa física, Recife/PE)
+            enquanto o registro da pessoa jurídica é concluído. Responsabilidade pelo
+            tratamento de dados assumida pelo titular individual até o registro da Ltda.
           </p>
           <p className="text-xs text-text-tertiary">
             Canal de contato:{" "}
@@ -66,6 +73,17 @@ export function SiteFooter() {
               contato@saudejusia.com.br
             </a>
             .
+          </p>
+          {/* LGPD art. 41 §1º III — canal público de contato do Encarregado (DPO). */}
+          <p className="text-xs text-text-tertiary">
+            Canal do Encarregado de Dados (DPO):{" "}
+            <a
+              href="mailto:privacidade@saudejusia.com.br"
+              className="hover:text-text-primary"
+            >
+              privacidade@saudejusia.com.br
+            </a>{" "}
+            (resposta em até 15 dias conforme art. 18 da LGPD).
           </p>
           <p className="max-w-3xl text-xs leading-relaxed text-text-tertiary">
             A SaudeJusia é uma plataforma de informação e geração de documentos para o

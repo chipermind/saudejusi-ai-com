@@ -12,9 +12,18 @@ export function HeroCaseCard() {
             <p className="caption">Sua situação</p>
             <p className="mt-1 text-sm font-medium text-text-primary">Beneficiário · plano negado</p>
           </div>
-          <span className="inline-flex items-center gap-1.5 rounded-md bg-danger/10 px-2 py-1 text-xs font-medium text-danger">
-            <ShieldAlert className="h-3 w-3" /> Negativa
-          </span>
+          {/*
+            Badge "Exemplo ilustrativo" + rodapé deixam inequívoco que o card não
+            é uma análise real do leitor — evita confusão com o caso pessoal dele.
+          */}
+          <div className="flex flex-shrink-0 flex-col items-end gap-1.5">
+            <span className="inline-flex items-center rounded-md border border-border bg-surface-elevated px-2 py-1 text-xs font-medium text-text-tertiary">
+              Exemplo ilustrativo
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-md bg-danger/10 px-2 py-1 text-xs font-medium text-danger">
+              <ShieldAlert className="h-3 w-3" /> Negativa
+            </span>
+          </div>
         </div>
 
         <div className="mt-4 space-y-3 text-sm">
@@ -47,6 +56,9 @@ export function HeroCaseCard() {
 
       <p className="mt-3 text-center text-[11px] leading-relaxed text-text-tertiary">
         Cobertura prevista no Rol ANS (RN 465/2021). Prazo de urgência: 3 dias úteis.
+      </p>
+      <p className="mt-2 text-center text-[11px] leading-relaxed text-text-tertiary">
+        Caso ilustrativo. Sua análise real será individual, baseada nos seus documentos.
       </p>
     </div>
   );

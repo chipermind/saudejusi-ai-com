@@ -15,8 +15,10 @@ const TESTIMONIALS: Testimonial[] = [
     role: "Mãe de beneficiário — Recife/PE",
   },
   {
+    // Reescrito: a versão anterior usava "ganhei", o que pode ser lido como promessa
+    // de resultado (Provimento OAB 205/2021 e CDC art. 37). Texto factual, sem promessa.
     quote:
-      "Fui dispensada pelo advogado porque o caso 'era pequeno demais'. Com a SaudeJusia eu mesma fiz o recurso à ANS e ganhei.",
+      "O advogado que procurei achou o caso pequeno demais para ele. Com a SaudeJusia, preparei o recurso à ANS sozinha e a operadora liberou o procedimento.",
     initials: "CL",
     name: "C. L.",
     role: "Beneficiária — Curitiba/PR",
