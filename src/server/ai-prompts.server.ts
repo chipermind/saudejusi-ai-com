@@ -176,10 +176,12 @@ Devolva JSON:
 }
 
 REGRAS DE DECISÃO:
-- Se houver urgência clínica descrita: priorize \`acao: "carta_urgencia_medica"\` ou orientação para procurar atendimento imediato.
-- Se houver negativa formal: a ação inicial costuma ser \`reconsideracao_operadora\` antes de NIP.
-- Se não houver negativa por escrito: oriente primeiro obter protocolo/registro formal antes de qualquer outra ação.
-- Se o caso exigir tese judicial controvertida: \`acao: "consultar_advogado"\` e \`documento_indicado: "nenhum"\`.`;
+- Urgência clínica (risco iminente à vida ou à saúde): \`acao: "carta_urgencia_medica"\` e em \`riscos_limites\` orientar procurar imediatamente o médico assistente, o canal de urgência da operadora e a ANS (Disque ANS 0800 701 9656). Não substitua orientação médica.
+- Demanda assistencial (cobertura, internação, OPME, home care, terapia, medicamento) com negativa formal por escrito: ação inicial costuma ser \`reconsideracao_operadora\` antes de NIP.
+- Demanda não-assistencial (reembolso, reajuste, rescisão unilateral, descredenciamento): caminho administrativo costuma ser \`nip_ans\` direto, depois \`notificacao_extrajudicial\` se persistir.
+- Sem negativa por escrito: oriente primeiro obter protocolo/registro formal antes de qualquer outra ação.
+- Faltando contrato, segmentação, pedido/relatório médico ou negativa formal: liste em \`falta_confirmar\` e calibre \`confianca\` para "baixa" ou "media".
+- Caso exija tese judicial controvertida: \`acao: "consultar_advogado"\` e \`documento_indicado: "nenhum"\`.`;
 
   const system = [BLOCO_PAPEL, BLOCO_REGRAS_DURAS, tarefa].join("\n\n");
   const user = wrapUserInput(rawUserInput);
