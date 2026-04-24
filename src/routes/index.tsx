@@ -75,11 +75,18 @@ function Hero() {
             <br />
             <span className="text-text-secondary">A gente te mostra como virar o jogo.</span>
           </h1>
+          {/*
+            Alinhado ao FAQ: para ação judicial é preciso advogado. Trocamos
+            "Sem advogado no meio" (que prometia o oposto do FAQ) por "sem
+            intermediário, na maioria dos casos", preservando a promessa forte
+            sem criar expectativa impossível.
+          */}
           <p className="mt-6 max-w-xl text-base leading-relaxed text-text-secondary">
             A SaudeJusia é a plataforma que explica, em linguagem clara, os seus direitos
             como beneficiário de plano de saúde — e gera as notificações, os recursos à
-            ANS e as cartas de reconsideração que você mesmo envia. Sem advogado no
-            meio. Sem custo surpresa.
+            ANS e as cartas de reconsideração que você mesmo envia. Resolva direto com
+            a operadora e com a ANS, sem intermediário, na maioria dos casos. Sem custo
+            surpresa.
           </p>
           <p className="mt-4 max-w-xl text-xs leading-relaxed text-text-tertiary">
             Serviço de informação e geração de documentos para o próprio beneficiário.
@@ -229,15 +236,20 @@ function Direitos() {
       <div className="mx-auto grid max-w-7xl items-center gap-16 px-6 py-24 lg:grid-cols-2">
         <div>
           <p className="caption">Direitos, não opinião</p>
+          {/*
+            Tom neutralizado: "suas chances" + "antes de gastar com advogado" podem
+            ser lidos como promessa de resultado e desestímulo à advocacia
+            (Provimento OAB 205/2021). Mantém o valor informativo sem risco.
+          */}
           <h2 className="mt-4 text-4xl font-semibold tracking-tight text-text-primary">
-            Suas chances baseadas em
+            Um panorama claro,
             <br />
-            <span className="text-text-tertiary">dados reais da ANS e dos tribunais.</span>
+            <span className="text-text-tertiary">baseado em dados reais da ANS e dos tribunais.</span>
           </h2>
           <p className="mt-6 max-w-lg text-base leading-relaxed text-text-secondary">
             Cruzamos o tipo de negativa, a operadora e o histórico de resolução
             administrativa e judicial para mostrar, em linguagem clara, qual o caminho
-            mais rápido e barato para o seu caso — antes de você gastar com advogado.
+            mais rápido e barato para o seu caso — antes de você decidir o próximo passo.
           </p>
           <ul className="mt-8 space-y-3 text-sm text-text-secondary">
             {[
@@ -324,12 +336,12 @@ function Pricing() {
           </h2>
         </div>
 
-        {/* ROI block */}
+        {/* ROI block — "30 anos" era hipérbole que insinuava certeza de reversão; neutralizado. */}
         <div className="mt-10 rounded-xl border border-border bg-surface p-6">
           <p className="text-sm leading-relaxed text-text-secondary">
             Uma mensalidade por menos do que um remédio de farmácia.{" "}
             <span className="font-medium text-text-primary">
-              Uma negativa revertida paga 30 anos de assinatura.
+              Uma negativa revertida paga muitos meses de assinatura.
             </span>
           </p>
         </div>
