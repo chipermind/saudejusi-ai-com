@@ -19,10 +19,10 @@ import { sanitizeUserInput } from "./ai-guardrails.server";
 // Bump a cada mudança material. Consumidor injeta no banco (ai_prompt_runs).
 
 export const PROMPT_VERSIONS = {
-  classify: "saudejusia-classify-v1.0.0",
-  extract: "saudejusia-extract-v1.0.0",
-  analyze: "saudejusia-analyze-v1.0.0",
-  generate: "saudejusia-generate-v1.0.0",
+  classify: "saudejusia-classify-v1.1.0",
+  extract: "saudejusia-extract-v1.1.0",
+  analyze: "saudejusia-analyze-v1.1.0",
+  generate: "saudejusia-generate-v1.1.0",
 } as const;
 
 export type PromptTask = keyof typeof PROMPT_VERSIONS;
