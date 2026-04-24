@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, AlertTriangle } from "lucide-react";
 import { trackEvent } from "@/lib/plausible";
 
 const PLAN_TYPE_OPTIONS = [
@@ -179,6 +179,41 @@ function WaitlistPage() {
                 Beta fechado em andamento. Acesso por convite.
               </p>
 
+              {/*
+                Aviso temporário enquanto Termos / Privacidade / LGPD estão em
+                redação. Referenciar documentos inexistentes vicia o consentimento
+                (LGPD art. 8 §4). Removido quando os documentos forem publicados.
+              */}
+              <div
+                role="note"
+                className="mt-6 flex gap-3 rounded-lg border border-warning/30 bg-warning/5 p-4"
+              >
+                <AlertTriangle
+                  className="mt-0.5 h-4 w-4 flex-shrink-0 text-warning"
+                  aria-hidden="true"
+                />
+                <div className="text-xs leading-relaxed text-text-secondary">
+                  <p className="font-medium text-text-primary">
+                    Documentos legais em elaboração
+                  </p>
+                  <p className="mt-2">
+                    Os Termos de Uso, a Política de Privacidade e o documento de
+                    conformidade LGPD estão em redação e serão publicados antes da
+                    abertura pública do beta. Enquanto isso, seus dados são tratados
+                    com criptografia em repouso e em trânsito, usados exclusivamente
+                    para envio do convite ao beta, e você pode solicitar exclusão a
+                    qualquer momento pelo e-mail{" "}
+                    <a
+                      href="mailto:privacidade@saudejusia.com.br"
+                      className="text-primary hover:text-primary/80"
+                    >
+                      privacidade@saudejusia.com.br
+                    </a>
+                    .
+                  </p>
+                </div>
+              </div>
+
               <form onSubmit={handleSubmit} className="mt-8 space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">E-mail</Label>
@@ -287,6 +322,12 @@ function WaitlistPage() {
                   />
                 </div>
 
+                {/*
+                  Consentimento LGPD reescrito (art. 8 §4 — informado e específico):
+                  descreve o que está sendo consentido (envio de convite ao beta) e
+                  preserva o direito de exclusão. Não referencia documentos ainda
+                  inexistentes (Termos / Privacidade), o que viciaria o consentimento.
+                */}
                 <label className="flex items-start gap-3 pt-2 text-sm text-text-secondary">
                   <Checkbox
                     checked={accepted}
@@ -295,18 +336,18 @@ function WaitlistPage() {
                     aria-label="Aceitar termos"
                   />
                   <span>
-                    Li e concordo com os{" "}
-                    <Link to="/termos" className="text-primary hover:text-primary/80">
-                      Termos
-                    </Link>{" "}
-                    e com a{" "}
-                    <Link
-                      to="/privacidade"
+                    Autorizo o uso do meu e-mail e dados informados exclusivamente
+                    para envio do convite ao beta e comunicações relacionadas ao
+                    lançamento. Ciente de que os Termos e a Política de Privacidade
+                    finais serão publicados antes da abertura pública e de que posso
+                    solicitar exclusão dos meus dados a qualquer momento em{" "}
+                    <a
+                      href="mailto:privacidade@saudejusia.com.br"
                       className="text-primary hover:text-primary/80"
                     >
-                      Política de Privacidade
-                    </Link>
-                    . Autorizo o tratamento dos meus dados pessoais conforme a LGPD.
+                      privacidade@saudejusia.com.br
+                    </a>
+                    .
                   </span>
                 </label>
 
