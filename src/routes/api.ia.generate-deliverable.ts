@@ -47,8 +47,8 @@ const DeliverableInputSchema = z.object({
 });
 
 // Campos do caso liberados para o modelo.
-// PII desnecessária (client_cpf, card_number) NUNCA é enviada — vira placeholder
-// no documento e é preenchida pelo advogado na revisão.
+// PII desnecessária (documento fiscal do cliente e número do cartão do plano)
+// NUNCA é enviada ao modelo — vira placeholder e é preenchida na revisão humana.
 const CASE_FIELDS = [
   "client_name",
   "operadora",
