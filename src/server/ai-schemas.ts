@@ -130,6 +130,26 @@ export const GenerateOutputSchema = BaseOutputSchema.extend({
 });
 export type GenerateOutput = z.infer<typeof GenerateOutputSchema>;
 
+// ─── generate (Defere B2B — drafting para profissional habilitado) ────────
+// Schema dedicado. NÃO reutiliza TipoPecaSchema (B2C): os tipos jurídicos
+// "parecer" e "peticao_inicial" não têm equivalente no produto B2C.
+
+export const DefereDeliverableTypeSchema = z.enum([
+  "parecer",
+  "recurso_ans",
+  "notificacao_extrajudicial",
+  "peticao_inicial",
+]);
+export type DefereDeliverableType = z.infer<typeof DefereDeliverableTypeSchema>;
+
+export const DefereDeliverableOutputSchema = BaseOutputSchema.extend({
+  task: z.literal("generate"),
+  deliverable_type: DefereDeliverableTypeSchema,
+  corpo_documento: z.string().min(1).max(20_000),
+  revisar_antes_finalizar: z.array(z.string().min(1).max(300)).min(1).max(10),
+});
+export type DefereDeliverableOutput = z.infer<typeof DefereDeliverableOutputSchema>;
+
 // ─── Disclaimer padrão ────────────────────────────────────────────────────
 // Concatenado pelo consumidor APÓS o parse. Nunca vem do modelo.
 
