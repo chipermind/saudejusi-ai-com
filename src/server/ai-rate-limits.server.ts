@@ -58,3 +58,42 @@ export async function checkAndIncrementRateLimit(
     limit,
   };
 }
+
+// ─── Teto técnico B2B Defere ──────────────────────────────────────────────
+// Technical abuse ceiling, NOT commercial quota. Entitlement B2B continua em
+// assertActiveFirm(law_firms.plan). Não usa profiles.plan_tier.
+
+export type DefereTechnicalTask = "defere_classify" | "defere_extract";
+
+export const DEFERE_TECHNICAL_DAILY_LIMIT = 100;
+
+export async function checkAndIncrementTechnicalLimit(
+  userId: string,
+  task: DefereTechnicalTask,
+  limit: number,
+): Promise<RateLimitResult> {
+  if (!Number.isInteger(limit) || limit < 1) {
+    throw new Error("RATE_LIMIT_INVALID_LIMIT");
+  }
+  const today = new Date().toISOString().slice(0, 10);
+
+  const { data, error } = await supabaseAdmin.rpc("increment_rate_limit", {
+    p_user_id: userId,
+    p_task: task,
+    p_day: today,
+    p_limit: limit,
+  });
+
+  if (error) throw new Error("RATE_LIMIT_RPC_FAILED");
+
+  const row = Array.isArray(data) ? data[0] : data;
+  const allowed = row?.allowed === true;
+  const newCount = typeof row?.new_count === "number" ? row.new_count : limit + 1;
+
+  return {
+    allowed,
+    remaining: Math.max(0, limit - newCount),
+    resetAt: nextResetUtc(),
+    limit,
+  };
+}
