@@ -120,6 +120,23 @@ export const Route = createFileRoute("/api/ia/extract-document")({
           .maybeSingle();
         const firmId = lawyer?.law_firm_id ?? null;
 
+        // Path binding: the admin client bypasses Storage RLS, so never follow a
+        // file_path that is not bound to this firm and this case.
+        const expectedPrefix = `${firmCheck.lawFirmId}/${doc.case_id}/`;
+        if (
+          !doc.case_id ||
+          typeof doc.file_path !== "string" ||
+          !doc.file_path.startsWith(expectedPrefix) ||
+          doc.file_path.length <= expectedPrefix.length
+        ) {
+          console.warn("extract-document: invalid_document_path", {
+            doc_id: doc.id,
+            firm_id: firmCheck.lawFirmId,
+            case_id: doc.case_id,
+          });
+          return json({ error: "invalid_document_path" }, 400);
+        }
+
         // Download the file directly via admin client (private bucket).
         // Gemini processes PDFs natively, so no signed URL or PDF→image step is needed.
         const { data: fileBlob, error: dlErr } = await supabaseAdmin.storage
