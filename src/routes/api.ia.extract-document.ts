@@ -8,7 +8,15 @@ import {
   modelForTask,
   type MediaMimeType,
 } from "@/server/ai-gateway.server";
-import { EXTRACTION_PROMPTS, EXTRACTION_SCHEMAS } from "@/server/ai-prompts.server";
+import {
+  EXTRACTION_PROMPTS,
+  EXTRACTION_SCHEMAS,
+  LEGACY_MEDIA_UNTRUSTED_RULE,
+} from "@/server/ai-prompts.server";
+import {
+  DEFERE_TECHNICAL_DAILY_LIMIT,
+  checkAndIncrementTechnicalLimit,
+} from "@/server/ai-rate-limits.server";
 import { assertActiveFirm, sanitizeAiError } from "@/server/auth-firm.server";
 
 const corsHeaders = {
@@ -180,12 +188,28 @@ export const Route = createFileRoute("/api/ia/extract-document")({
           return json({ error: "file_too_large" }, 400);
         }
 
+        // Technical abuse ceiling (not commercial quota) — before base64/AI.
+        try {
+          const rl = await checkAndIncrementTechnicalLimit(
+            claims.claims.sub,
+            "defere_extract",
+            DEFERE_TECHNICAL_DAILY_LIMIT,
+          );
+          if (!rl.allowed) return json({ error: "rate_limited" }, 429);
+        } catch {
+          console.error("extract-document: technical limiter unavailable", {
+            law_firm_id: firmCheck.lawFirmId,
+          });
+          return json({ error: "service_unavailable" }, 503);
+        }
+
         const base64 = bytesToBase64(bytes);
         const mimeType = detectMime(doc.file_name ?? doc.file_path);
 
         try {
           const result = await callAiWithMedia({
             task: "ocr",
+            system: LEGACY_MEDIA_UNTRUSTED_RULE,
             prompt,
             mediaBase64: base64,
             mediaMimeType: mimeType,

@@ -36,6 +36,13 @@
       "when": 1790188639993,
       "tag": "0004_case_documents_insert_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790188914860,
+      "tag": "0005_ai_rate_limits_defere_tasks",
+      "breakpoints": true
     }
   ]
 }
