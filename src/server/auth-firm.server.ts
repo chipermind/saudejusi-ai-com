@@ -13,6 +13,35 @@ export type AssertFirmOk = {
 };
 export type AssertFirmFail = { ok: false; status: number; error: string };
 
+/** Paid plans that grant access without a trial window. Explicit allowlist. */
+export const PAID_FIRM_PLANS: readonly string[] = ["solo", "escritorio", "enterprise"];
+
+const SUBSCRIPTION_REQUIRED: AssertFirmFail = {
+  ok: false,
+  status: 402,
+  error: "subscription_required",
+};
+
+/**
+ * Pure, fail-closed plan evaluation. Anything not explicitly allowed is blocked.
+ */
+export function evaluateFirmPlan(
+  plan: string | null | undefined,
+  trialEndsAt: string | null | undefined,
+  nowMs: number = Date.now(),
+): { ok: true } | AssertFirmFail {
+  if (plan === "trial") {
+    if (!trialEndsAt) return SUBSCRIPTION_REQUIRED;
+    const endMs = new Date(trialEndsAt).getTime();
+    if (!Number.isFinite(endMs) || endMs <= nowMs) return SUBSCRIPTION_REQUIRED;
+    return { ok: true };
+  }
+  if (typeof plan === "string" && PAID_FIRM_PLANS.includes(plan)) {
+    return { ok: true };
+  }
+  return SUBSCRIPTION_REQUIRED;
+}
+
 export async function assertActiveFirm(userId: string): Promise<AssertFirmOk | AssertFirmFail> {
   const { data: lawyer, error } = await supabaseAdmin
     .from("lawyers")
@@ -31,20 +60,8 @@ export async function assertActiveFirm(userId: string): Promise<AssertFirmOk | A
   const plan = firm?.plan ?? null;
   const trialEndsAt = firm?.trial_ends_at ?? null;
 
-  // Trial plan must be within the trial window
-  if (plan === "trial") {
-    if (!trialEndsAt) {
-      return { ok: false, status: 402, error: "subscription_required" };
-    }
-    if (new Date(trialEndsAt).getTime() < Date.now()) {
-      return { ok: false, status: 402, error: "subscription_required" };
-    }
-  }
-
-  // Explicit suspension states block access
-  if (plan === "suspended" || plan === "cancelled" || plan === "expired") {
-    return { ok: false, status: 402, error: "subscription_required" };
-  }
+  const verdict = evaluateFirmPlan(plan, trialEndsAt);
+  if (!verdict.ok) return verdict;
 
   return {
     ok: true,

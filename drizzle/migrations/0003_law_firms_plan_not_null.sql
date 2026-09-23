@@ -1,0 +1,1 @@
+ALTER TABLE public.law_firms ALTER COLUMN plan SET NOT NULL;
