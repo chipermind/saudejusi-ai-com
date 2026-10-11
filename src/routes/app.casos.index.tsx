@@ -23,19 +23,38 @@ function CasesListPage() {
   const [drafts, setDrafts] = useState<CaseRow[]>([]);
   const [active, setActive] = useState<CaseRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setLoadError(false);
     (async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("cases")
         .select("id, client_name, operadora, denial_category, status, is_draft, wizard_step, created_at")
         .order("created_at", { ascending: false });
+      if (cancelled) return;
+      if (error) {
+        setLoadError(true);
+        setLoading(false);
+        return;
+      }
       const list = (data ?? []) as CaseRow[];
       setDrafts(list.filter((c) => c.is_draft));
       setActive(list.filter((c) => !c.is_draft));
       setLoading(false);
-    })();
-  }, []);
+    })().catch(() => {
+      if (!cancelled) {
+        setLoadError(true);
+        setLoading(false);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [reloadKey]);
 
   return (
     <div className="mx-auto max-w-7xl px-8 py-8">
@@ -92,6 +111,16 @@ function CasesListPage() {
         </div>
         {loading ? (
           <div className="p-8 text-sm text-text-tertiary">Carregando…</div>
+        ) : loadError ? (
+          <div role="alert" className="flex flex-col items-center gap-3 p-12 text-center">
+            <AlertCircle className="h-8 w-8 text-danger" />
+            <p className="text-sm text-text-secondary">
+              Não foi possível carregar os casos. Verifique sua conexão e tente novamente.
+            </p>
+            <Button size="sm" variant="outline" onClick={() => setReloadKey((k) => k + 1)}>
+              Tentar novamente
+            </Button>
+          </div>
         ) : active.length === 0 ? (
           <div className="flex flex-col items-center gap-3 p-12 text-center">
             <FileText className="h-8 w-8 text-text-tertiary" />

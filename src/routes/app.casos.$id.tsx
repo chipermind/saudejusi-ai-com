@@ -37,25 +37,34 @@ function CaseDetailPage() {
   const [c, setC] = useState<CaseRow | null>(null);
   const [docs, setDocs] = useState<DocRow[]>([]);
   const [dels, setDels] = useState<DelRow[]>([]);
+  const [loadState, setLoadState] = useState<"loading" | "ready" | "not_found" | "error">("loading");
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let channel: ReturnType<typeof supabase.channel> | null = null;
     let cancelled = false;
+    setLoadState("loading");
 
     (async () => {
-      const { data: caseRow } = await supabase.from("cases").select("*").eq("id", id).single();
+      const { data: caseRow, error: caseErr } = await supabase
+        .from("cases").select("*").eq("id", id).maybeSingle();
       if (cancelled) return;
-      if (caseRow) setC(caseRow as CaseRow);
-      const { data: d } = await supabase
+      if (caseErr) { setLoadState("error"); return; }
+      if (!caseRow) { setLoadState("not_found"); return; }
+      setC(caseRow as CaseRow);
+      const { data: d, error: docsErr } = await supabase
         .from("case_documents").select("id, doc_type, file_name").eq("case_id", id);
       if (cancelled) return;
+      if (docsErr) { setLoadState("error"); return; }
       setDocs((d ?? []) as DocRow[]);
-      const { data: dd } = await supabase
+      const { data: dd, error: delsErr } = await supabase
         .from("case_deliverables")
         .select("id, deliverable_type, status, content, error_message")
         .eq("case_id", id);
       if (cancelled) return;
+      if (delsErr) { setLoadState("error"); return; }
       setDels((dd ?? []) as DelRow[]);
+      setLoadState("ready");
 
       // Resolve user's law firm to scope the realtime channel topic.
       // Realtime authorization policy on `realtime.messages` only allows
@@ -91,15 +100,42 @@ function CaseDetailPage() {
           },
         )
         .subscribe();
-    })();
+    })().catch(() => {
+      if (!cancelled) setLoadState((s) => (s === "ready" ? s : "error"));
+    });
 
     return () => {
       cancelled = true;
       if (channel) supabase.removeChannel(channel);
     };
-  }, [id]);
+  }, [id, reloadKey]);
 
-  if (!c) return <div className="p-8 text-sm text-text-tertiary">Carregando…</div>;
+  if (loadState === "error") {
+    return (
+      <div role="alert" className="mx-auto max-w-6xl px-8 py-8">
+        <p className="text-sm text-text-secondary">
+          Não foi possível carregar este caso. Verifique sua conexão e tente novamente.
+        </p>
+        <div className="mt-4 flex gap-2">
+          <Button size="sm" variant="outline" onClick={() => setReloadKey((k) => k + 1)}>
+            Tentar novamente
+          </Button>
+          <Link to="/app/casos"><Button size="sm" variant="ghost">Voltar para casos</Button></Link>
+        </div>
+      </div>
+    );
+  }
+  if (loadState === "not_found") {
+    return (
+      <div className="mx-auto max-w-6xl px-8 py-8">
+        <p className="text-sm text-text-secondary">Caso não encontrado ou sem permissão de acesso.</p>
+        <Link to="/app/casos" className="mt-4 inline-block text-sm text-primary hover:text-primary-hover">
+          Voltar para casos
+        </Link>
+      </div>
+    );
+  }
+  if (loadState === "loading" || !c) return <div className="p-8 text-sm text-text-tertiary">Carregando…</div>;
 
   const j = c.jurimetrics as { probabilidade_exito?: number; tempo_medio_meses?: number; dano_moral?: { mediana: number } } | null;
 
