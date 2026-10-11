@@ -43,6 +43,13 @@
       "when": 1790188914860,
       "tag": "0005_ai_rate_limits_defere_tasks",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791729648072,
+      "tag": "0006_drop_lawyers_self_update_policy",
+      "breakpoints": true
     }
   ]
 }
