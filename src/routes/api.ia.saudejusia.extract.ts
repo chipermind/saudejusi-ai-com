@@ -177,6 +177,13 @@ export const Route = createFileRoute("/api/ia/saudejusia/extract")({
                 429,
               );
             }
+            if (msg === "AI_PAYMENT_REQUIRED") {
+              // Upstream credit exhaustion: terminal, never retry; same contract as handleAiRequest.
+              return jsonResponse(
+                { error: "ai_unavailable", message: "Serviço temporariamente indisponível." },
+                503,
+              );
+            }
             retriesUsed = i + 1;
             console.error(`[extract] tentativa ${i + 1} falhou`, msg);
           }
