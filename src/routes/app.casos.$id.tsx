@@ -37,25 +37,34 @@ function CaseDetailPage() {
   const [c, setC] = useState<CaseRow | null>(null);
   const [docs, setDocs] = useState<DocRow[]>([]);
   const [dels, setDels] = useState<DelRow[]>([]);
+  const [loadState, setLoadState] = useState<"loading" | "ready" | "not_found" | "error">("loading");
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let channel: ReturnType<typeof supabase.channel> | null = null;
     let cancelled = false;
+    setLoadState("loading");
 
     (async () => {
-      const { data: caseRow } = await supabase.from("cases").select("*").eq("id", id).single();
+      const { data: caseRow, error: caseErr } = await supabase
+        .from("cases").select("*").eq("id", id).maybeSingle();
       if (cancelled) return;
-      if (caseRow) setC(caseRow as CaseRow);
-      const { data: d } = await supabase
+      if (caseErr) { setLoadState("error"); return; }
+      if (!caseRow) { setLoadState("not_found"); return; }
+      setC(caseRow as CaseRow);
+      const { data: d, error: docsErr } = await supabase
         .from("case_documents").select("id, doc_type, file_name").eq("case_id", id);
       if (cancelled) return;
+      if (docsErr) { setLoadState("error"); return; }
       setDocs((d ?? []) as DocRow[]);
-      const { data: dd } = await supabase
+      const { data: dd, error: delsErr } = await supabase
         .from("case_deliverables")
         .select("id, deliverable_type, status, content, error_message")
         .eq("case_id", id);
       if (cancelled) return;
+      if (delsErr) { setLoadState("error"); return; }
       setDels((dd ?? []) as DelRow[]);
+      setLoadState("ready");
 
       // Resolve user's law firm to scope the realtime channel topic.
       // Realtime authorization policy on `realtime.messages` only allows
