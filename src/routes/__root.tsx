@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
 
 // NOTE: Update `data-domain` when migrating to the production domain (saudejusia.com.br).
-const PLAUSIBLE_DOMAIN = "defere-ia-com.lovable.app";
+const PLAUSIBLE_DOMAIN = "saudejusi-ai-com.lovable.app";
 
 function NotFoundComponent() {
   return (
