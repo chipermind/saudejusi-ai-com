@@ -38,6 +38,11 @@ export const Route = createFileRoute("/api/ia/saudejusia/artifact/$id")({
         if (meta.user_id !== user.userId) {
           return jsonResponse({ error: "not_found" }, 404);
         }
+        // Retenção LGPD fail-closed: expirado não é servido, mesmo sem expurgo físico.
+        const expiresAtMs = Date.parse(meta.expires_at);
+        if (!Number.isFinite(expiresAtMs) || expiresAtMs <= Date.now()) {
+          return jsonResponse({ error: "not_found" }, 404);
+        }
 
         const { data: blobData, error: dlErr } = await supabaseAdmin.storage
           .from("case-artifacts")
